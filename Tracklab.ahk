@@ -126,7 +126,8 @@ c::
 WinClose, Tracklab
 Return
 
-~LButton::
+LButton::
+/*
 MouseGetPos, MouseX, MouseY
 PixelGetColor, color, %MouseX%, %MouseY%
 if color = 0xFFFFFF
@@ -145,6 +146,14 @@ if color = 0xFFFFFF
 		SendInput {Down 2}
 	}
 }
+*/
+Click
+hw_popup := DllCall( "GetLastActivePopup", "uint", hw_toplevel )
+
+WinGetClass, class, ahk_id %hw_popup%
+WinGetTitle, title, ahk_id %hw_popup%
+
+MsgBox, EL = %ErrorLevel% ~ %hw_popup%`n`nclass = %class%`ntitle = %title%
 return
 
 ~^RButton::
