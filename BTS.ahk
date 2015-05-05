@@ -16,6 +16,8 @@ Menu, as, Add, 3 EMG, :EMG
 Menu, as, Add, 4 Abrir archivo..., AbrirArchivo
 Menu, as, Add, 5 Interpolar, Interpolar
 
+Menu, merge, Add, Intercambiar, Intercambiar
+
 ProgramFilesWin := GetOS()
 
 #IfWinActive, Select Visualization ahk_class ThunderRT6FormDC
@@ -393,7 +395,7 @@ AppsKey::
 MouseGetPos, , , , cont
 if cont = ThunderRT6ListBox2
 {
-	Click
+	;Click
 
 	ControlGet, tas, Choice, , ThunderRT6ListBox2, A
 	ControlGet, tas2, Choice, , ThunderRT6ListBox3, A
@@ -426,10 +428,14 @@ if cont = ThunderRT6ListBox2
 	
 	GuiContextMenu:
 	ControlGet, texto, Choice, , ThunderRT6ListBox2, A
-	SendMessage, 0x0191, 10, fa, ThunderRT6ListBox2, A 
+	SendMessage, 0x0190, 0, 0, ThunderRT6ListBox2, A
+	Cantidad = %ErrorLevel%
 	if %texto%
 	{
-			if (P1 = "N" && P2 = "N")
+		if Cantidad = 1
+		{
+
+						if (P1 = "N" && P2 = "N")
 			{
 				Menu, as, Disable, 2 Cinetica
 			}
@@ -447,7 +453,31 @@ if cont = ThunderRT6ListBox2
 				Menu, as, Disable, 3 EMG
 			}
 			Menu, as, Show
+		}
+		else if Cantidad = 2
+		{
+			Menu, merge, Show
+		}
 	}
+	Return
+
+	Intercambiar:
+	LB_GETSELCOUNT = 0x0190
+	LB_GETSELITEMS = 0x0191
+	LB_GETTEXT = 0x0189
+
+	SendMessage LB_GETSELCOUNT, 0, 0, ThunderRT6ListBox2, A
+	count := ErrorLevel
+	capacity := count * 4 ; 4 = size of integer
+	VarSetCapacity(SelectList, capacity, 0)
+	SendMessage, LB_GETSELITEMS , capacity, &SelectList, ThunderRT6ListBox2, A
+	Loop %count%
+	{
+	   selPos := GetInteger(SelectList, A_Index)
+	   result = %result%%selPos%`n
+	}
+	SendMessage, LB_GETTEXT, 2000, &, TMyListBox2, ahk_id %hw_TTOTAL_CMD%
+	MsgBox %count% ->`n%result%
 	Return
 
 	Cinematica:

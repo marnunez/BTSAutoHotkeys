@@ -32,3 +32,16 @@ GetOS(){
       MsgBox, SISTEMA OPERATIVO NO RECONOCIDO
    }
 }
+
+; Simple derivative of ExtractInteger, for Win32 integers (4 bytes)
+GetInteger(ByRef @source, _pos){
+   local result, offset
+
+   offset := (_pos - 1) * 4
+   result = 0
+   Loop 4  ; Build the integer by adding up its bytes.
+   {
+      result += *(&@source + offset + A_Index-1) << 8*(A_Index-1)
+   }
+   Return result
+}
