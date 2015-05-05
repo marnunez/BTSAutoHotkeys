@@ -1,6 +1,8 @@
 #SingleInstance, force
+#Include, Funciones.ahk
 #Persistent
 #Hotstring NoMouse
+
 Menu, as, Add, 1 Cinematica, Cinematica
 Menu, as, Add, 2 Cinetica, Cinetica
 Menu, EMG, Add, 1 EMG8, EMG8
@@ -391,7 +393,7 @@ AppsKey::
 MouseGetPos, , , , cont
 if cont = ThunderRT6ListBox2
 {
-	;Click
+	Click
 
 	ControlGet, tas, Choice, , ThunderRT6ListBox2, A
 	ControlGet, tas2, Choice, , ThunderRT6ListBox3, A
@@ -423,10 +425,8 @@ if cont = ThunderRT6ListBox2
 	equis = 
 	
 	GuiContextMenu:
-	fa = ""
 	ControlGet, texto, Choice, , ThunderRT6ListBox2, A
-	SendMessage, 0x0191, 10, &fa, ThunderRT6ListBox2, A 
-	MsgBox, %fa%
+	SendMessage, 0x0191, 10, fa, ThunderRT6ListBox2, A 
 	if %texto%
 	{
 			if (P1 = "N" && P2 = "N")
@@ -1527,16 +1527,5 @@ SetLastMode(mode) {
 	{
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 		FileAppend, 8TV2PLA.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
-	}
-}
-
-GetOS(){
-	if A_OSVersion = WIN_7
-	{
-		return A_ProgramFiles . (A_PtrSize=8 ? " (x86)" : "")
-	}
-	if A_OSVersion = WIN_XP
-	{
-		return A_ProgramFiles
 	}
 }
