@@ -1,3 +1,7 @@
+LB_GETSELCOUNT = 0x0190
+LB_GETSELITEMS = 0x0191
+LB_GETTEXT = 0x0189
+
 DetectContextMenu(){
    GuiThreadInfoSize = 48
    VarSetCapacity(GuiThreadInfo, 48)
@@ -18,7 +22,7 @@ DetectContextMenu(){
       Return 0
   }
 
-GetOS(){
+GetProgramFiles(){
    if A_OSVersion = WIN_7
    {
       return A_ProgramFiles . (A_PtrSize=8 ? " (x86)" : "")

@@ -165,7 +165,7 @@ PixelGetColor, color, %MouseX%, %MouseY%
 if color = 0xFFFFFF
 {
 	SendInput {Down 9}{Enter}
-	Loop
+	Loop 1000
 	{
 		Click right %MouseX%, %MouseY%
 		if DetectContextMenu()

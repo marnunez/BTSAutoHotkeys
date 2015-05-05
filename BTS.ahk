@@ -16,9 +16,7 @@ Menu, as, Add, 3 EMG, :EMG
 Menu, as, Add, 4 Abrir archivo..., AbrirArchivo
 Menu, as, Add, 5 Interpolar, Interpolar
 
-Menu, merge, Add, Intercambiar, Intercambiar
-
-ProgramFilesWin := GetOS()
+ProgramFilesWin := GetProgramFiles()
 
 #IfWinActive, Select Visualization ahk_class ThunderRT6FormDC
 f::
@@ -419,16 +417,16 @@ if cont = ThunderRT6ListBox2
 	idSesionNum := Chr(idSesionNum + 96)
 	largo := StrLen(idpaciente)
 	largo2 := 5 - largo
+	equis = 
 	Loop, %largo2%
 	{
 		equis := equis . "x"
 	}
 	nombreArchivo = %idpaciente%%equis%%idSesionNum%%idTrial%
-	equis = 
 	
 	GuiContextMenu:
 	ControlGet, texto, Choice, , ThunderRT6ListBox2, A
-	SendMessage, 0x0190, 0, 0, ThunderRT6ListBox2, A
+	SendMessage, LB_GETSELCOUNT, 0, 0, ThunderRT6ListBox2, A ; Chequear cuantos trials hay seleccionados
 	Cantidad = %ErrorLevel%
 	if %texto%
 	{
@@ -456,28 +454,58 @@ if cont = ThunderRT6ListBox2
 		}
 		else if Cantidad = 2
 		{
+			capacity := Cantidad * 4 ; 4 = size of integer
+			VarSetCapacity(SelectList, capacity, 0)
+			result =
+			VarSetCapacity(trial1_texto,512)
+			VarSetCapacity(trial2_texto,512)
+			SendMessage, LB_GETSELITEMS , capacity, &SelectList, ThunderRT6ListBox2, A
+		   	selPos := GetInteger(SelectList, 1)
+			SendMessage, LB_GETTEXT, %selPos%, &trial1_texto, ThunderRT6ListBox2, A
+			selPos := GetInteger(SelectList, 2)
+			SendMessage, LB_GETTEXT, %selPos%, &trial2_texto, ThunderRT6ListBox2, A
+			
+			startId := RegExMatch(trial1_texto, "\d\w|__")
+			idTrial1 := SubStr(trial1_texto, startId,2)
+			estudio1 = %idPaciente%%equis%%idSesionNum%%idTrial1%
+
+			startId := RegExMatch(trial2_texto, "\d\w|__")
+			idTrial2 := SubStr(trial2_texto, startId,2)
+			estudio2 = %idPaciente%%equis%%idSesionNum%%idTrial2%
+			Menu, merge, Add, Intercambiar %estudio1% por %estudio2%, Intercambiar
 			Menu, merge, Show
+			Menu, merge, DeleteAll
 		}
 	}
 	Return
 
 	Intercambiar:
-	LB_GETSELCOUNT = 0x0190
-	LB_GETSELITEMS = 0x0191
-	LB_GETTEXT = 0x0189
-
-	SendMessage LB_GETSELCOUNT, 0, 0, ThunderRT6ListBox2, A
-	count := ErrorLevel
-	capacity := count * 4 ; 4 = size of integer
-	VarSetCapacity(SelectList, capacity, 0)
-	SendMessage, LB_GETSELITEMS , capacity, &SelectList, ThunderRT6ListBox2, A
-	Loop %count%
+	MsgBox,52,Intercambiar estudios, Intercambiar %estudio1%`n por %estudio2%?
+	IfMsgBox, Yes
 	{
-	   selPos := GetInteger(SelectList, A_Index)
-	   result = %result%%selPos%`n
+		IfNotExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\SWAP
+		{
+			FileCreateDir, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\SWAP
+		}
+		FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%estudio1%.* ,%ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\SWAP\%estudio2%.*
+		If ErrorLevel
+		{
+			MsgBox, 16, Error, Error al mover %ErrorLevel% archivos de %estudio1% a carpeta SWAP\%estudio2%
+			Return
+		}
+		FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%estudio2%.* ,%ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%estudio1%.*
+		If ErrorLevel
+		{
+			MsgBox, 16, Error, Error al mover %ErrorLevel% archivos de %estudio2% a %estudio1%
+			Return
+		}		
+		FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\SWAP\%estudio2%.* ,%ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%estudio2%.*
+		If ErrorLevel
+		{
+			MsgBox, 16, Error, Error al mover %ErrorLevel% archivos de SWAP\%estudio2% a %estudio2%
+			Return
+		}
 	}
-	SendMessage, LB_GETTEXT, 2000, &, TMyListBox2, ahk_id %hw_TTOTAL_CMD%
-	MsgBox %count% ->`n%result%
 	Return
 
 	Cinematica:
@@ -1522,7 +1550,7 @@ UnmarkRightFootP2() {
 }
 
 SetLastMode(mode) {
-	ProgramFilesWin := GetOS()
+	ProgramFilesWin := GetProgramFiles()
 	if mode = Normal
 	{
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
