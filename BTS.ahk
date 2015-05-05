@@ -490,19 +490,19 @@ if cont = ThunderRT6ListBox2
 		FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%estudio1%.* ,%ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\SWAP\%estudio2%.*
 		If ErrorLevel
 		{
-			MsgBox, 16, Error, Error al mover %ErrorLevel% archivos de %estudio1% a carpeta SWAP\%estudio2%
+			MsgBox, 16, Error, Error al mover %ErrorLevel% archivos de Data\%estudio1% a Data\SWAP\%estudio2%
 			Return
 		}
 		FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%estudio2%.* ,%ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%estudio1%.*
 		If ErrorLevel
 		{
-			MsgBox, 16, Error, Error al mover %ErrorLevel% archivos de %estudio2% a %estudio1%
+			MsgBox, 16, Error, Error al mover %ErrorLevel% archivos de Data\%estudio2% a Data\%estudio1%
 			Return
 		}		
 		FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\SWAP\%estudio2%.* ,%ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%estudio2%.*
 		If ErrorLevel
 		{
-			MsgBox, 16, Error, Error al mover %ErrorLevel% archivos de SWAP\%estudio2% a %estudio2%
+			MsgBox, 16, Error, Error al mover %ErrorLevel% archivos de Data\SWAP\%estudio2% a Data\%estudio2%
 			Return
 		}
 	}
