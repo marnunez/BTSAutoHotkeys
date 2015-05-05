@@ -1,3 +1,4 @@
+#SingleInstance, force
 #Persistent
 #Hotstring NoMouse
 Menu, as, Add, 1 Cinematica, Cinematica
@@ -13,14 +14,7 @@ Menu, as, Add, 3 EMG, :EMG
 Menu, as, Add, 4 Abrir archivo..., AbrirArchivo
 Menu, as, Add, 5 Interpolar, Interpolar
 
-if A_OSVersion = WIN_7
-{
-	ProgramFilesWin := A_ProgramFiles . (A_PtrSize=8 ? " (x86)" : "")
-}
-if A_OSVersion = WIN_XP
-{
-	ProgramFilesWin := A_ProgramFiles
-}
+ProgramFilesWin := GetOS()
 
 #IfWinActive, Select Visualization ahk_class ThunderRT6FormDC
 f::
@@ -397,7 +391,7 @@ AppsKey::
 MouseGetPos, , , , cont
 if cont = ThunderRT6ListBox2
 {
-	Click
+	;Click
 
 	ControlGet, tas, Choice, , ThunderRT6ListBox2, A
 	ControlGet, tas2, Choice, , ThunderRT6ListBox3, A
@@ -429,8 +423,10 @@ if cont = ThunderRT6ListBox2
 	equis = 
 	
 	GuiContextMenu:
+	fa = ""
 	ControlGet, texto, Choice, , ThunderRT6ListBox2, A
-	;MsgBox, %P1%`n%P2%
+	SendMessage, 0x0191, 10, &fa, ThunderRT6ListBox2, A 
+	MsgBox, %fa%
 	if %texto%
 	{
 			if (P1 = "N" && P2 = "N")
@@ -1496,7 +1492,8 @@ UnmarkRightFootP2() {
 }
 
 SetLastMode(mode) {
-	if mode = "Normal"
+	ProgramFilesWin := GetOS()
+	if mode = Normal
 	{
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 		FileAppend, 8TV2PLA.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
@@ -1530,5 +1527,16 @@ SetLastMode(mode) {
 	{
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 		FileAppend, 8TV2PLA.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+	}
+}
+
+GetOS(){
+	if A_OSVersion = WIN_7
+	{
+		return A_ProgramFiles . (A_PtrSize=8 ? " (x86)" : "")
+	}
+	if A_OSVersion = WIN_XP
+	{
+		return A_ProgramFiles
 	}
 }
