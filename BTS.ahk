@@ -398,7 +398,7 @@ AppsKey::
 MouseGetPos, , , , cont
 if cont = ThunderRT6ListBox2
 {
-	;Click
+	Click
 
 	ControlGet, tas, Choice, , ThunderRT6ListBox2, A
 	ControlGet, tas2, Choice, , ThunderRT6ListBox3, A
