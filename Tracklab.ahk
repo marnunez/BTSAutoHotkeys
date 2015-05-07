@@ -126,6 +126,15 @@ Return
 
 c::
 WinClose, Tracklab
+WinWaitActive, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
+Loop 400
+{
+		if ExisteTrialProcessing()
+		{
+			Break
+		}
+}
+ControlFocus, Button1, A
 Return
 
 ~LButton::

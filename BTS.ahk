@@ -3,6 +3,12 @@
 #Persistent
 #Hotstring NoMouse
 
+gui +LastFound
+hwnd := winexist()
+dllcall( "RegisterShellHookWindow", uint,hwnd )
+msgnum := dllcall( "RegisterWindowMessage", Str,"SHELLHOOK" )
+onmessage( msgnum, "shellmessage" )
+
 Menu, as, Add, 1 Cinematica, Cinematica
 Menu, as, Add, 2 Cinetica, Cinetica
 Menu, EMG, Add, 1 EMG8, EMG8
@@ -29,6 +35,17 @@ f::
 		Control, Check, , ThunderRT6CheckBox1, A
 	}
 	ControlFocus, Button1, A
+return
+
+#IfWinActive, Data Computing ahk_class #32770
+space::
+Enter::
+ControlClick, Button1, A
+WinWaitActive, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
+if ExisteTrialProcessing()
+{
+	ControlFocus, Button16, A
+}
 return
 
 #IfWinActive, Preview ahk_class ThunderRT6FormDC
@@ -386,6 +403,16 @@ Return
 Enter::
 space::
 ControlClick, Button6, A
+WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
+Control, Check, , ThunderRT6CheckBox4, A
+Control, Check, , ThunderRT6CheckBox3, A
+Control, Choose, 3, ThunderRT6ComboBox1, A
+ControlGet, esta, Enabled, , ThunderRT6CheckBox1, A
+if esta = 1
+{
+	Control, Check, , ThunderRT6CheckBox1, A
+}
+ControlFocus, Button1, A
 Return
 
 RButton::
@@ -423,7 +450,7 @@ if cont = ThunderRT6ListBox2
 		equis := equis . "x"
 	}
 	nombreArchivo = %idpaciente%%equis%%idSesionNum%%idTrial%
-	
+
 	GuiContextMenu:
 	ControlGet, texto, Choice, , ThunderRT6ListBox2, A
 	SendMessage, LB_GETSELCOUNT, 0, 0, ThunderRT6ListBox2, A ; Chequear cuantos trials hay seleccionados
@@ -1157,8 +1184,7 @@ if ExisteBarra()
 	ControlSend, ThunderRT6VScrollBar4, {Up 8}
 	SetTitleMatchMode, %OldMatchMode%
 
-	Loop, 5
-	{
+
 	OldMatchMode := A_TitleMatchMode
 	SetTitleMatchMode, RegEx
 	ControlGet, Handle2D, Hwnd, , \s3D$
@@ -1167,10 +1193,13 @@ if ExisteBarra()
 	Y := Y + 30
 	Yf := Y - 500
 	MouseGetPos, Xo, Yo
-	MouseClickDrag, Right, %X%, %Y%, %X%, %Yf%, 0
-	MouseMove, %Xo%, %Yo%, 0
-	SetTitleMatchMode, %OldMatchMode%
+	Loop, 6
+	{
+		MouseClickDrag, Right, %X%, %Y%, %X%, %Yf%, 0
 	}
+		MouseMove, %Xo%, %Yo%, 0
+		SetTitleMatchMode, %OldMatchMode%
+
 }
 Return
 
@@ -1397,23 +1426,6 @@ Return
 ;Funciones
 ;##########################################
 
-ExisteTrialProcessing(){
-	WinGet, listacontroles, ControlList, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
-
-	Loop, Parse, listacontroles ,`n
-	{
-		if A_LoopField = ThunderRT6FormDC1
-		{
-			ControlGet, v, Visible, ,Trial Processing, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
-			if v = 1 
-			{
-				return true
-			}
-		}
-	}
-	return false
-}
-
 ExisteBarra(){
 	WinGet, listacontroles, ControlList, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 
@@ -1586,4 +1598,19 @@ SetLastMode(mode) {
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 		FileAppend, 8TV2PLA.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 	}
+}
+
+shellmessage(wparam,lparam) {
+    ;message is HSHELL_WINDOWCREATED
+    if (wparam = 1)
+    {
+        wingettitle title,ahk_id %lparam%
+        wingetclass class,ahk_id %lparam%
+ 
+        ;close it
+        if (class = "ThunderRT6FormDC") && (title = "PDFCreator 0.9.6")
+            ;controlclick yes,ahk_id %lparam%
+            ;ControlSetText, ThunderRT6TextBox6, %nombreArchivo%, A
+            MsgBox, %nombreArchivoMULTI%
+        }
 }

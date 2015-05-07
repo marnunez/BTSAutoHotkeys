@@ -49,3 +49,20 @@ GetInteger(ByRef @source, _pos){
    }
    Return result
 }
+
+ExisteTrialProcessing(){
+   WinGet, listacontroles, ControlList, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
+
+   Loop, Parse, listacontroles ,`n
+   {
+      if A_LoopField = ThunderRT6FormDC1
+      {
+         ControlGet, v, Visible, ,Trial Processing, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
+         if v = 1 
+         {
+            return true
+         }
+      }
+   }
+   return false
+}
