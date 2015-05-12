@@ -3,12 +3,6 @@
 #Persistent
 #Hotstring NoMouse
 
-gui +LastFound
-hwnd := winexist()
-dllcall( "RegisterShellHookWindow", uint,hwnd )
-msgnum := dllcall( "RegisterWindowMessage", Str,"SHELLHOOK" )
-onmessage( msgnum, "shellmessage" )
-
 Menu, as, Add, 1 Cinematica, Cinematica
 Menu, as, Add, 2 Cinetica, Cinetica
 Menu, EMG, Add, 1 EMG8, EMG8
@@ -24,6 +18,10 @@ Menu, as, Add, 5 Interpolar, Interpolar
 
 ProgramFilesWin := GetProgramFiles()
 
+VarSetCapacity(ante,512)
+VarSetCapacity(next,512)
+VarSetCapacity(last,512)
+
 #IfWinActive, Select Visualization ahk_class ThunderRT6FormDC
 f::
 	Control, Check, , ThunderRT6CheckBox4, A
@@ -38,6 +36,7 @@ f::
 return
 
 #IfWinActive, Data Computing ahk_class #32770
+
 space::
 Enter::
 ControlClick, Button1, A
@@ -49,6 +48,10 @@ if ExisteTrialProcessing()
 return
 
 #IfWinActive, Preview ahk_class ThunderRT6FormDC
+e::
+ControlGetPos, , , PicWidth, PicHeight, ThunderRT6PictureBoxDC1, A
+MsgBox, %PicWidth%`t%PicHeight%
+Return
 p::
 SetControlDelay, -1
 ControlClick, ThunderRT6CommandButton2, A
@@ -82,6 +85,9 @@ else
 {
 	ControlFocus, ThunderRT6ListBox1, A
 	SendInput {Up}
+	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
+	SendMessage, LB_GETTEXT, %ErrorLevel%, &last, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
+	last := SubStr(last, 1,30)
 }
 return
 
@@ -105,6 +111,9 @@ else
 {
 	ControlFocus, ThunderRT6ListBox1, A
 	SendInput {Down}
+	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
+	SendMessage, LB_GETTEXT, %ErrorLevel%, &last, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
+	last := SubStr(last, 1,30)
 }
 return
 
@@ -165,8 +174,13 @@ ControlClick, Button5, A
 }
 Return
 
+Escape::
+ControlClick, Button5, A
+Return
+
 Enter::
 ControlClick, Button6, A
+WinWaitActive, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 Loop
 {
 		if ExisteTrialProcessing()
@@ -204,7 +218,40 @@ if cont = ThunderRT6TextBox1
 else
 {
 	SetControlDelay, -1
-	ControlClick, ThunderRT6CheckBox1, A
+
+	if next
+	{
+		ante := next
+		next =
+		goto va
+	}
+
+	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
+	SendMessage, LB_GETTEXT, %ErrorLevel%, &ante, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
+	ante := SubStr(ante, 1,30)
+	
+	va:
+	ControlGet, es, Checked, , ThunderRT6CheckBox1, A
+	if es
+	{
+		Control, UnCheck, , ThunderRT6CheckBox1, A
+	}
+	Else
+	{
+		Control, Check, , ThunderRT6CheckBox1, A
+	}
+
+	Sleep 1
+
+	SendMessage, LB_FINDSTRING, -1, &ante, ThunderRT6ListBox1, A ;Busco el texto
+	;MsgBox, %ErrorLevel%
+	if ErrorLevel = 4294967295
+	{
+		next := ante
+		;MsgBox, %ante%`n%next%
+		return
+	}
+	SendMessage, LB_SETCURSEL, %ErrorLevel%, 0, ThunderRT6ListBox1, A ;Me muevo al encontrado
 }
 Return
 
@@ -400,6 +447,10 @@ ControlClick, Button5, A
 }
 Return
 
+Escape::
+ControlClick, Button5, A
+Return
+
 Enter::
 space::
 ControlClick, Button6, A
@@ -567,7 +618,6 @@ if cont = ThunderRT6ListBox2
 	Control,Choose,8,ThunderRT6ComboBox1
 	ControlSetText, ThunderRT6TextBox2, ES_kt
 	ControlClick, ThunderRT6CommandButton3, A
-	Clipboard = %nombreArchivo%
 	Return
 
 	EMG8:
@@ -1094,10 +1144,42 @@ return
 
 
 r::
-SetControlDelay, 0
+SetControlDelay, -1
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 5&
 WinWaitActive, Select trials to process ahk_class ThunderRT6FormDC
-ControlFocus, ThunderRT6ListBox1, A
+
+if next
+{
+	ante := next
+	next =
+	goto va2
+}
+
+SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
+SendMessage, LB_GETTEXT, %ErrorLevel%, &ante, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
+ante := SubStr(ante, 1,30)
+
+va2:
+ControlGet, es, Checked, , ThunderRT6CheckBox1, A
+if es
+{
+	Control, UnCheck, , ThunderRT6CheckBox1, A
+}
+Else
+{
+	Control, Check, , ThunderRT6CheckBox1, A
+}
+Sleep 1
+
+SendMessage, LB_FINDSTRING, -1, &ante, ThunderRT6ListBox1, A ;Busco el texto
+;MsgBox, %ErrorLevel%
+if ErrorLevel = 4294967295
+{
+	next := ante
+	;MsgBox, %ante%`n%next%
+	return
+}
+SendMessage, LB_SETCURSEL, %ErrorLevel%, 0, ThunderRT6ListBox1, A ;Me muevo al encontrado
 Return
 
 t::
@@ -1160,6 +1242,8 @@ Return
 v::
 if ExisteBarra()
 {
+	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 6& , 2&
+
 	OldMatchMode := A_TitleMatchMode
 	SetTitleMatchMode, RegEx
 	ControlGet, Handle2D, Hwnd, , \s3D$
@@ -1389,6 +1473,7 @@ if ExisteBarra()
 Return
 
 q::
+Escape::
 if ExisteBarra()
 {
 	OldMatchMode := A_TitleMatchMode
@@ -1397,6 +1482,10 @@ if ExisteBarra()
 	ControlFocus, , %Handle3D%, A
 	SendInput ^{F4}
 	SetTitleMatchMode, %OldMatchMode%
+}
+else if ExisteTrialProcessing()
+{
+	ControlClick, Button16, A
 }
 Return
 
@@ -1598,19 +1687,4 @@ SetLastMode(mode) {
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 		FileAppend, 8TV2PLA.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 	}
-}
-
-shellmessage(wparam,lparam) {
-    ;message is HSHELL_WINDOWCREATED
-    if (wparam = 1)
-    {
-        wingettitle title,ahk_id %lparam%
-        wingetclass class,ahk_id %lparam%
- 
-        ;close it
-        if (class = "ThunderRT6FormDC") && (title = "PDFCreator 0.9.6")
-            ;controlclick yes,ahk_id %lparam%
-            ;ControlSetText, ThunderRT6TextBox6, %nombreArchivo%, A
-            MsgBox, %nombreArchivoMULTI%
-        }
 }

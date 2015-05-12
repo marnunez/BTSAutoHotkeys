@@ -134,13 +134,12 @@ Loop 400
 			Break
 		}
 }
-ControlFocus, Button1, A
+ControlFocus, Button17, A
 Return
 
 ~LButton::
-MouseGetPos, MouseX, MouseY
-PixelGetColor, color, %MouseX%, %MouseY%
-if color = 0xFFFFFF
+MouseGetPos, MouseX, MouseY, ,contq
+if contq = AfxOleControl421
 {
 	si := 0
 	Loop 1000
@@ -157,21 +156,10 @@ if color = 0xFFFFFF
 	}
 }
 return
-/*
-Click
-hw_popup := DllCall( "GetLastActivePopup", "uint", hw_toplevel )
-
-WinGetClass, class, ahk_id %hw_popup%
-WinGetTitle, title, ahk_id %hw_popup%
-
-;MsgBox, EL = %ErrorLevel% ~ %hw_popup%`n`nclass = %class%`ntitle = %title%
-*/
-
 
 ~^RButton::
-MouseGetPos, MouseX, MouseY
-PixelGetColor, color, %MouseX%, %MouseY%
-if color = 0xFFFFFF
+MouseGetPos, MouseX, MouseY, ,contq
+if contq = AfxOleControl421
 {
 	SendInput {Down 9}{Enter}
 	Loop 1000
@@ -188,27 +176,24 @@ if color = 0xFFFFFF
 return
 
 ~+RButton::
-MouseGetPos, MouseX, MouseY
-PixelGetColor, color, %MouseX%, %MouseY%
-if color = 0xFFFFFF
+MouseGetPos, MouseX, MouseY, ,contq
+if contq = AfxOleControl421
 {
 	SendInput {Down 9}{Enter}
 }
 return
 
 ~!RButton::
-MouseGetPos, MouseX, MouseY
-PixelGetColor, color, %MouseX%, %MouseY%
-if color = 0xFFFFFF
+MouseGetPos, MouseX, MouseY, ,contq
+if contq = AfxOleControl421
 {
 	SendInput {Down 10}{Enter}
 }
 return
 
 MButton::
-MouseGetPos, MouseX, MouseY
-PixelGetColor, color, %MouseX%, %MouseY%
-if color = 0xFFFFFF
+MouseGetPos, MouseX, MouseY, ,contq
+if contq = AfxOleControl421
 {
 	SendInput {Click Right}{Down 8}{Enter}
 }
