@@ -7,6 +7,7 @@ LB_FINDSTRING = 0x018F
 LB_SETCURSEL = 0x0186
 LB_ERR = -1
 
+;Detecta si en este momento hay un menu contextual presente
 DetectContextMenu(){
    GuiThreadInfoSize = 48
    VarSetCapacity(GuiThreadInfo, 48)
@@ -26,7 +27,7 @@ DetectContextMenu(){
    Else
       Return 0
   }
-
+;Devuelve el valor correcto de "Archivos de Programa" para este sistema operativo
 GetProgramFiles(){
    if A_OSVersion = WIN_7
    {
@@ -55,6 +56,7 @@ GetInteger(ByRef @source, _pos){
    Return result
 }
 
+;Chequea si existe el Control de Trial Processing
 ExisteTrialProcessing(){
    WinGet, listacontroles, ControlList, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 

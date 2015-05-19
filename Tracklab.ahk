@@ -73,7 +73,7 @@ IfWinActive, Tracklab ahk_class #32770, A
 {
 	MsgBox, UFA
 }
-SendInput !-g!-x
+SendInput !-n!-x
 TimetoFrame()
 BlockInput, Off
 return
@@ -95,12 +95,12 @@ Loop,
 		break
 }
 ControlClick, ThunderRT6OptionButton1, A
-SendInput !-g!-x
+SendInput !-n!-x
 TimetoFrame()
 BlockInput, Off
 return
 
-t::
+r::
 SetControlDelay, -1
 WinMenuSelectItem, Tracklab, , 6&, 2&
 WinWaitActive, Open model file. ahk_class #32770
@@ -116,7 +116,7 @@ Loop,
 		break
 }
 ControlClick, ThunderRT6CommandButton1, A
-SendInput !-g!-x
+SendInput !-n!-x
 return
 
 g::
@@ -138,7 +138,7 @@ ControlFocus, Button17, A
 Return
 
 ~LButton::
-MouseGetPos, MouseX, MouseY, ,contq
+MouseGetPos, MouseX, MouseY, ,contq,1
 if contq = AfxOleControl421
 {
 	si := 0
@@ -158,7 +158,7 @@ if contq = AfxOleControl421
 return
 
 ~^RButton::
-MouseGetPos, MouseX, MouseY, ,contq
+MouseGetPos, MouseX, MouseY, ,contq,1
 if contq = AfxOleControl421
 {
 	SendInput {Down 9}{Enter}
@@ -176,18 +176,30 @@ if contq = AfxOleControl421
 return
 
 ~+RButton::
-MouseGetPos, MouseX, MouseY, ,contq
+MouseGetPos, MouseX, MouseY, ,contq,1
 if contq = AfxOleControl421
 {
-	SendInput {Down 9}{Enter}
+	Loop 100
+	{
+		if DetectContextMenu()
+		{
+			SendInput {Down 9}{Enter}
+		}
+	}
 }
 return
 
 ~!RButton::
-MouseGetPos, MouseX, MouseY, ,contq
+MouseGetPos, MouseX, MouseY, ,contq,1
 if contq = AfxOleControl421
 {
-	SendInput {Down 10}{Enter}
+	Loop 100
+	{
+		if DetectContextMenu()
+		{
+			SendInput {Down 10}{Enter}
+		}
+	}
 }
 return
 
@@ -200,6 +212,7 @@ if contq = AfxOleControl421
 return
 
 f::
+SetControlDelay, -1
 ControlGet, b, Enabled, , ThunderRT6CheckBox19, A
 if b = 1
 {
@@ -212,8 +225,8 @@ TimetoFrame()
 Return
 
 #IfWinActive, Save reconstructed data as ... ahk_class #32770
-SetControlDelay, -1
 space::
+SetControlDelay, -1
 ControlClick, Button2, A
 WinWaitActive, Output data options ahk_class ThunderRT6FormDC
 ControlFocus, ThunderRT6TextBox2, A
@@ -221,13 +234,15 @@ SendMessage, 177, 0, -1, ThunderRT6TextBox2, A
 Return
 
 #IfWinActive, Output data options ahk_class ThunderRT6FormDC
-SetControlDelay, -1
+
 space::
 Enter::
+SetControlDelay, -1
 ControlClick, ThunderRT6CommandButton4, A
 Return
 
 tab::
+SetControlDelay, -1
 ControlGetFocus, a, A
 if a = ThunderRT6TextBox2
 {
@@ -240,6 +255,7 @@ else
 }
 Return
 
+;Cambia el display verde de tiempo a cuadros.
 TimetoFrame() {
 	BlockInput, MouseMove
 	MouseGetPos, Xo, Yo

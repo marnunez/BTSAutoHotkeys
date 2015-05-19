@@ -10,7 +10,9 @@ Menu, EMG, Add, 2 EMG4, EMG4
 Menu, EMG, Add, 3 EMG5, EMG5
 Menu, EMG, Add, 4 EMG4L, EMG4L
 Menu, EMG, Add, 5 EMG4R, EMG4R
-Menu, EMG, Add, 6 Vastos, Vastos
+Menu, EMG, Add, 6 EMG5L, EMG5L
+Menu, EMG, Add, 7 EMG5R, EMG5R
+Menu, EMG, Add, 8 Vastos, Vastos
 
 Menu, as, Add, 3 EMG, :EMG
 Menu, as, Add, 4 Abrir archivo..., AbrirArchivo
@@ -61,7 +63,7 @@ if A_OSVersion = WIN_7
 {
 	WinWait, PDFCreator 0.9.6 ahk_class ThunderRT6FormDC ahk_exe PDFCreator.exe
 	ControlSetText, ThunderRT6TextBox6, %nombreArchivo%
-	KeyWait, Enter, D
+	Input,tecla,,{space}{enter}
 	ControlClick, ThunderRT6CommandButton7, A
 	WinWaitActive, Guardar como ahk_class #32770 ahk_exe PDFCreator.exe
 	ControlSetText, Edit1, C:\Users\marcha\Documents\pdf\%nombreArchivo%.pdf, A
@@ -85,9 +87,11 @@ else
 {
 	ControlFocus, ThunderRT6ListBox1, A
 	SendInput {Up}
+	/*
 	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
 	SendMessage, LB_GETTEXT, %ErrorLevel%, &last, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
 	last := SubStr(last, 1,30)
+	*/
 }
 return
 
@@ -111,9 +115,11 @@ else
 {
 	ControlFocus, ThunderRT6ListBox1, A
 	SendInput {Down}
+	/*
 	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
 	SendMessage, LB_GETTEXT, %ErrorLevel%, &last, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
 	last := SubStr(last, 1,30)
+	*/
 }
 return
 
@@ -179,6 +185,10 @@ ControlClick, Button5, A
 Return
 
 Enter::
+SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
+SendMessage, LB_GETTEXT, %ErrorLevel%, &next, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
+next := SubStr(next, 1,30)
+
 ControlClick, Button6, A
 WinWaitActive, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 Loop
@@ -199,6 +209,10 @@ if cont = ThunderRT6TextBox1
 }
 else
 {
+	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
+	SendMessage, LB_GETTEXT, %ErrorLevel%, &next, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
+	next := SubStr(next, 1,30)
+
 	ControlClick, Button6, A
 	Loop
 	{
@@ -491,7 +505,6 @@ if cont = ThunderRT6ListBox2
 	startId := RegExMatch(tas, "\w\s\w\s\w\s\w")
 	P1 := SubStr(tas, startId,1)
 	P2 := SubStr(tas, startId+2,1)
-	Clipboard = %P2%
 	idSesionNum := Chr(idSesionNum + 96)
 	largo := StrLen(idpaciente)
 	largo2 := 5 - largo
@@ -677,6 +690,30 @@ if cont = ThunderRT6ListBox2
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox2, ES_km4er
+	ControlClick, ThunderRT6CommandButton3, A
+	Return
+
+	EMG5R:
+	nombreArchivo := nombreArchivo . "_EMG5R"
+	SetControlDelay, -1
+	ControlClick, Button6, A
+	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
+	ControlClick, Button1, A
+	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
+	WinWaitActive, Informe ahk_class ThunderRT6FormDC
+	ControlSetText, ThunderRT6TextBox2, ES_km5er
+	ControlClick, ThunderRT6CommandButton3, A
+	Return
+
+	EMG5L:
+	nombreArchivo := nombreArchivo . "_EMG5L"
+	SetControlDelay, -1
+	ControlClick, Button6, A
+	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
+	ControlClick, Button1, A
+	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
+	WinWaitActive, Informe ahk_class ThunderRT6FormDC
+	ControlSetText, ThunderRT6TextBox2, ES_km5el
 	ControlClick, ThunderRT6CommandButton3, A
 	Return
 
@@ -965,7 +1002,7 @@ MsgBox, 1, Captura de peso del paciente, Subir el paciente a la plataforma 1 y a
 IfMsgBox OK
 {
 	ControlClick, TBitBtn3, A
-	KeyWait, Space, D
+	Input,tecla,,{space}{enter}
 	ControlClick, TBitBtn2, A
 	ControlClick, Confirm, A
 	ControlClick, TBitBtn9, A
@@ -1028,7 +1065,7 @@ Loop
 }
 ControlClick, TBitBtn5, A
 ControlClick, TBitBtn8, A
-KeyWait, Space, D
+Input,tecla,,{space}{enter}
 ControlClick, TBitBtn7, A
 WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
@@ -1060,7 +1097,7 @@ if (IsMarkedRightFootP2() = true)
 	UnmarkRightFootP2()
 }
 
-KeyWait, Space, D
+Input,tecla,,{space}{enter}
 ControlClick, TButton1, A
 WinWaitActive, New Trial ahk_class #32770
 ControlClick, Button1, A
@@ -1077,7 +1114,7 @@ return
 if not ColorChoice or ColorChoice = ""
 {
 	Gui, Add, Text, , Seleccione el tipo de EMG
-	Gui, Add, ListBox, R6 gColorChoice vColorChoice Choose1, ||EMG8E|EMG4E|EMG4L|EMG4R|Vastos|
+	Gui, Add, ListBox, R8 gColorChoice vColorChoice Choose1, ||EMG8E|EMG4E|EMG4L|EMG4R|EMG5L|EMG5R|Vastos|
 	Gui, Show
 	Return
 
@@ -1138,10 +1175,35 @@ if (IsMarkedRightFootP2() = true)
 	UnmarkRightFootP2()
 }
 
-KeyWait, Space, D
+Input,tecla,,{space}{enter}
 ControlClick, TButton1, A
 return
 
+tab::
+{
+	if ExisteTrialProcessing()
+	{
+		SetControlDelay, -1
+		ControlGetFocus, ptab, A
+		if ptab = Button15
+		{
+			ControlFocus, Button17, A
+		}
+		else if ptab = Button17
+		{
+			ControlFocus, Button16, A
+		}
+		else if ptab = Button16
+		{
+			ControlFocus, Button15, A
+		}
+	}
+	Else
+	{
+		SendInput, {tab}
+	}
+}
+Return
 
 r::
 SetControlDelay, -1
@@ -1415,7 +1477,7 @@ if ExisteBarra()
 }
 if ExisteTrialProcessing()
 {
-	SendInput {Up}
+	SendInput {Down}
 }
 Return
 
@@ -1447,7 +1509,7 @@ if ExisteBarra()
 }
 if ExisteTrialProcessing()
 {
-	SendInput {Down}
+	SendInput {Up}
 }
 Return
 
@@ -1681,6 +1743,16 @@ SetLastMode(mode) {
 	{
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 		FileAppend, 8TV2PL4R.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+	}
+	else if mode = EMG5R
+	{
+		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+		FileAppend, 8TV2PL5R.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+	}
+	else if mode = EMG5L
+	{
+		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+		FileAppend, 8TV2PL5L.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 	}
 	else
 	{
