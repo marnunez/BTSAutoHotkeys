@@ -24,6 +24,8 @@ VarSetCapacity(ante,512)
 VarSetCapacity(next,512)
 VarSetCapacity(last,512)
 
+#s::Suspend ;Inicio + S --> Deshabilita/Habilita todos los atajos (menos a sí mismo)
+
 #IfWinActive, Select Visualization ahk_class ThunderRT6FormDC
 f::
 	Control, Check, , ThunderRT6CheckBox4, A
@@ -38,7 +40,6 @@ f::
 return
 
 #IfWinActive, Data Computing ahk_class #32770
-
 space::
 Enter::
 ControlClick, Button1, A
