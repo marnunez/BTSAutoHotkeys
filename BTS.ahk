@@ -56,7 +56,7 @@ ControlGetPos, , , PicWidth, PicHeight, ThunderRT6PictureBoxDC1, A
 MsgBox, %PicWidth%`t%PicHeight%
 Return
 p::
-SetControlDelay, -1
+
 ControlClick, ThunderRT6CommandButton2, A
 WinWait, Configurar ahk_class #32770
 ControlClick, Button7, A
@@ -77,7 +77,7 @@ Return
 ; Atajos de la ventana de trackeo
 ;**************************************************************
 #IfWinActive, Select trials to process ahk_class ThunderRT6FormDC
-SetControlDelay, -1
+
 w::
 ControlGetFocus, cont, A
 if cont = ThunderRT6TextBox1
@@ -213,13 +213,16 @@ else
 	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
 	SendMessage, LB_GETTEXT, %ErrorLevel%, &next, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
 	next := SubStr(next, 1,30)
-
+	
 	ControlClick, Button6, A
 	Loop
 	{
 			if ExisteTrialProcessing()
-			break
+			{
+				break
+			}
 	}
+	WinActivate, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 	ControlFocus, Button15, A
 }
 Return
@@ -232,7 +235,7 @@ if cont = ThunderRT6TextBox1
 }
 else
 {
-	SetControlDelay, -1
+	
 
 	if next
 	{
@@ -282,7 +285,7 @@ else if sel != ""
 	ControlGet, a, Enabled,, Button1
 	if a = 1
 	{
-		SetControlDelay, -1
+		
 		ControlClick, Button1, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
 		ControlFocus, Button2, A
@@ -304,7 +307,7 @@ else if sel != ""
 	ControlGet, a, Enabled,, Button3
 	if a = 1
 	{
-		SetControlDelay, -1
+		
 		ControlClick, Button3, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
 		ControlFocus, Button2, A
@@ -323,7 +326,7 @@ Return
 ;**************************************************************
 
 #IfWinActive, Select Trials ahk_class ThunderRT6FormDC
-SetControlDelay, -1
+
 w::
 ControlGetFocus, cont, A
 if cont = ThunderRT6TextBox1
@@ -418,7 +421,7 @@ else if sel != ""
 	ControlGet, a, Enabled,, Button3
 	if a = 1
 	{
-		SetControlDelay, -1
+		
 		ControlClick, Button3, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
 		ControlFocus, Button2, A
@@ -440,7 +443,7 @@ else if sel != ""
 	ControlGet, a, Enabled,, Button2
 	if a = 1
 	{
-		SetControlDelay, -1
+		
 		ControlClick, Button2, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
 		ControlFocus, Button2, A
@@ -525,7 +528,7 @@ if cont = ThunderRT6ListBox2
 		if Cantidad = 1
 		{
 
-						if (P1 = "N" && P2 = "N")
+			if (P1 = "N" && P2 = "N")
 			{
 				Menu, as, Disable, 2 Cinetica
 			}
@@ -601,7 +604,7 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	Cinematica:
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -622,7 +625,7 @@ if cont = ThunderRT6ListBox2
 	{
 		nombreArchivo := nombreArchivo . "_der"
 	}
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -636,7 +639,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG8:
 	nombreArchivo := nombreArchivo . "_EMG8"
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -648,7 +651,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG4:
 	nombreArchivo := nombreArchivo . "_EMG4"
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -660,7 +663,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG5:
 	nombreArchivo := nombreArchivo . "_EMG5"
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -672,7 +675,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG4L:
 	nombreArchivo := nombreArchivo . "_EMG4L"
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -684,7 +687,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG4R:
 	nombreArchivo := nombreArchivo . "_EMG4R"
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -696,7 +699,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG5R:
 	nombreArchivo := nombreArchivo . "_EMG5R"
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -708,7 +711,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG5L:
 	nombreArchivo := nombreArchivo . "_EMG5L"
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -720,7 +723,7 @@ if cont = ThunderRT6ListBox2
 
 	Vastos:
 	nombreArchivo := nombreArchivo . "_Vastos"
-	SetControlDelay, -1
+	
 	ControlClick, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	ControlClick, Button1, A
@@ -771,285 +774,36 @@ Return
 
 #1::
 SetLastMode("Normal")
-SetControlDelay, 0
-WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
-WinWaitActive, New Trial ahk_class ThunderRT6FormDC
-ControlSetText, ThunderRT6TextBox4, Rodilla derecha
-ControlClick, Button4, A
-WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
-Loop
-{
-	ControlGet, a, Enabled,, TBitBtn5
-	if a = 1 
-		break
-}
-ControlClick, TBitBtn5, A
-ControlClick, TBitBtn8, A
-Sleep, 4000
-ControlClick, TBitBtn7, A
-WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
-if (IsMarkedLeftFootP1() = true)
-{
-	UnmarkLeftFootP1()
-}
-if (IsMarkedRightFootP1() = true)
-{
-	UnmarkRightFootP1()
-}
-if (IsMarkedLeftFootP2() = true)
-{
-	UnmarkLeftFootP2()
-}
-if (IsMarkedRightFootP2() = true)
-{
-	UnmarkRightFootP2()
-}
-
-Control, Check, , TGroupButton3, A
-ControlClick, TButton1, A
-WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
-Control, Check, , AfxWnd406, A
-ControlSetText, ThunderRT6TextBox1, Rodilla derecha
-ControlClick, Button1, A
-WinWaitActive, Trial classification: ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
-ControlClick, Button1, A
+AdquireBarStanding("Rodilla derecha")
 return
 
 #2::
 SetLastMode("Normal")
-SetControlDelay, 0
-WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
-WinWait ahk_class ThunderRT6FormDC
-ControlSetText, ThunderRT6TextBox4, Tobillo derecho
-ControlClick, Button4, A
-WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
-Loop
-{
-	ControlGet, a, Enabled,, TBitBtn5
-	if a = 1 
-		break
-}
-ControlClick, TBitBtn5, A
-ControlClick, TBitBtn8, A
-Sleep, 4000
-ControlClick, TBitBtn7, A
-WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
-if (IsMarkedLeftFootP1() = true)
-{
-	UnmarkLeftFootP1()
-}
-if (IsMarkedRightFootP1() = true)
-{
-	UnmarkRightFootP1()
-}
-if (IsMarkedLeftFootP2() = true)
-{
-	UnmarkLeftFootP2()
-}
-if (IsMarkedRightFootP2() = true)
-{
-	UnmarkRightFootP2()
-}
-
-Control, Check, , TGroupButton3, A
-ControlClick, TButton1, A
-WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
-Control, Check, , AfxWnd406, A
-ControlSetText, ThunderRT6TextBox1, Tobillo derecho
-ControlClick, Button1, A
-WinWaitActive, Trial classification: ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
-ControlClick, Button1, A
-
+AdquireBarStanding("Tobillo derecho")
 return
 
 #3::
 SetLastMode("Normal")
-SetControlDelay, 0
-WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
-WinWait ahk_class ThunderRT6FormDC
-ControlSetText, ThunderRT6TextBox4, Rodilla izquierda
-ControlClick, Button4, A
-WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
-Loop
-{
-	ControlGet, a, Enabled,, TBitBtn5
-	if a = 1 
-		break
-}
-ControlClick, TBitBtn5, A
-ControlClick, TBitBtn8, A
-Sleep, 4000
-ControlClick, TBitBtn7, A
-WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
-if (IsMarkedLeftFootP1() = true)
-{
-	UnmarkLeftFootP1()
-}
-if (IsMarkedRightFootP1() = true)
-{
-	UnmarkRightFootP1()
-}
-if (IsMarkedLeftFootP2() = true)
-{
-	UnmarkLeftFootP2()
-}
-if (IsMarkedRightFootP2() = true)
-{
-	UnmarkRightFootP2()
-}
-
-Control, Check, , TGroupButton3, A
-ControlClick, TButton1, A
-WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
-Control, Check, , AfxWnd406, A
-ControlSetText, ThunderRT6TextBox1, Rodilla izquierda
-ControlClick, Button1, A
-WinWaitActive, Trial classification: ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
-ControlClick, Button1, A
+AdquireBarStanding("Rodilla izquierda")
 return
 
 #4::
 SetLastMode("Normal")
-SetControlDelay, 0
-WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
-WinWait ahk_class ThunderRT6FormDC
-ControlSetText, ThunderRT6TextBox4, Tobillo izquierdo
-ControlClick, Button4, A
-WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
-Loop
-{
-	ControlGet, a, Enabled,, TBitBtn5
-	if a = 1 
-		break
-}
-ControlClick, TBitBtn5, A
-ControlClick, TBitBtn8, A
-Sleep, 4000
-ControlClick, TBitBtn7, A
-WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
-if (IsMarkedLeftFootP1() = true)
-{
-	UnmarkLeftFootP1()
-}
-if (IsMarkedRightFootP1() = true)
-{
-	UnmarkRightFootP1()
-}
-if (IsMarkedLeftFootP2() = true)
-{
-	UnmarkLeftFootP2()
-}
-if (IsMarkedRightFootP2() = true)
-{
-	UnmarkRightFootP2()
-}
-
-Control, Check, , TGroupButton3, A
-ControlClick, TButton1, A
-WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
-Control, Check, , AfxWnd406, A
-ControlSetText, ThunderRT6TextBox1, Tobillo izquierdo
-ControlClick, Button1, A
-WinWaitActive, Trial classification: ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
-ControlClick, Button1, A
+AdquireBarStanding("Tobillo izquierdo")
 return
 
 #|::
 SetLastMode("Normal")
-SetControlDelay, 0
-WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
-WinWaitActive, New Trial ahk_class ThunderRT6FormDC
-ControlSetText, ThunderRT6TextBox4, Standing
-ControlClick, Button4, A
-WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
-WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
-Loop
-{
-	ControlGet, a, Enabled,, TBitBtn5
-	if a = 1 
-		break
-}
-ControlClick, TBitBtn5, A
-MsgBox, 1, Captura de peso del paciente, Subir el paciente a la plataforma 1 y aceptar
-IfMsgBox OK
-{
-	ControlClick, TBitBtn3, A
-	Input,tecla,,{space}{enter}
-	ControlClick, TBitBtn2, A
-	ControlClick, Confirm, A
-	ControlClick, TBitBtn9, A
-	Sleep, 4000
-	ControlClick, TBitBtn8, A
-	WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
-	if (IsMarkedLeftFootP1() = false)
-	{
-		MarkLeftFootP1()
-	}
-	if (IsMarkedRightFootP1() = false)
-	{
-		MarkRightFootP1()
-	}
-	if (IsMarkedLeftFootP2() = true)
-	{
-		UnmarkLeftFootP2()
-	}
-	if (IsMarkedRightFootP2() = true)
-	{
-		UnmarkRightFootP2()
-	}
-
-	Control, Check, , TGroupButton3, A
-	ControlClick, TButton1, A
-	WinWaitActive, New Trial ahk_class #32770
-	ControlClick, Button1, A
-	WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
-	Control, Check, , AfxWnd407, A
-	ControlSetText, ThunderRT6TextBox1, Standing
-	ControlClick, Button1, A
-	WinWaitActive, Trial classification: ahk_class #32770
-	ControlClick, Button1, A
-	WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
-	ControlClick, Button1, A
-}
-IfMsgBox Cancel
-{
-	ControlClick, TBitBtn6, A
-}
+AdquireStanding()
 return
 
 #space::
 SetLastMode("Normal")
-SetControlDelay, 0
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
 WinWaitActive, New Trial ahk_class ThunderRT6FormDC
 texto := ReturnFirstLineClipbrd()
@@ -1058,12 +812,7 @@ ControlClick, Button4, A
 WinWaitActive, New Trial ahk_class #32770
 ControlClick, Button1, A
 WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
-Loop
-{
-	ControlGet, a, Enabled,, TBitBtn5
-	if a = 1 
-		break
-}
+WaitForControlEnabled("TBitBtn5")
 ControlClick, TBitBtn5, A
 ControlClick, TBitBtn8, A
 Input,tecla,,{space}{enter}
@@ -1126,7 +875,7 @@ if not ColorChoice or ColorChoice = ""
 	Gui, Destroy
 	return
 }
-SetControlDelay, 0
+
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
 WinWaitActive, New Trial ahk_class ThunderRT6FormDC
 texto := ColorChoice
@@ -1184,7 +933,7 @@ tab::
 {
 	if ExisteTrialProcessing()
 	{
-		SetControlDelay, -1
+		
 		ControlGetFocus, ptab, A
 		if ptab = Button15
 		{
@@ -1207,7 +956,7 @@ tab::
 Return
 
 r::
-SetControlDelay, -1
+
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 5&
 WinWaitActive, Select trials to process ahk_class ThunderRT6FormDC
 
@@ -1246,10 +995,16 @@ SendMessage, LB_SETCURSEL, %ErrorLevel%, 0, ThunderRT6ListBox1, A ;Me muevo al e
 Return
 
 t::
-SetControlDelay, 0
+
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 2& , 1&
 WinWaitActive, Select Trials ahk_class ThunderRT6FormDC
 ControlFocus, ThunderRT6ListBox2, A
+Return
+
+n::
+
+WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1& , 3&
+WinWaitActive, New Patient ahk_class ThunderRT6FormDC
 Return
 
 ;*****************************************************
@@ -1373,6 +1128,7 @@ a::
 if ExisteBarra()
 {
 	ControlSend, ThunderRT6HScrollBar3, {Left}
+	;AutoAdjustScroll()
 }
 else
 {
@@ -1555,11 +1311,22 @@ Return
 z::
 if ExisteBarra()
 {
-	MsgBox, %X% %Y%
+	;FindFirstCyan()
 }
 else
 {
-	MsgBox % ReturnFirstLineClipbrd()
+	Gui, Add, Text, , Seleccione el tipo de EMG
+	Gui, Add, ListBox,% "R8" "gColorChoices" "vColorChoice" "Choose".ColorChoice, ||EMG8E|EMG4E|EMG4L|EMG4R|EMG5L|EMG5R|Vastos|
+	Gui, Add, Text, , % "Portapapeles: " . ReturnFirstLineClipbrd()
+	Gui, Show
+	Return
+
+	ColorChoices:
+	Gui, Submit
+	WinActivate, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
+	SetLastMode(ColorChoice)
+	Gui, Destroy
+	Return
 }
 return
 
@@ -1759,5 +1526,109 @@ SetLastMode(mode) {
 	{
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 		FileAppend, 8TV2PLA.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+	}
+}
+
+AdquireBarStanding(texto){
+	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
+	WinWaitActive, New Trial ahk_class ThunderRT6FormDC
+	ControlSetText, ThunderRT6TextBox4, %texto%
+	ControlClick, Button4, A
+	WinWaitActive, New Trial ahk_class #32770
+	ControlClick, Button1, A
+	WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
+	WaitForControlEnabled("TBitBtn5")
+	ControlClick, TBitBtn5, A
+	ControlClick, TBitBtn8, A
+	Sleep, 4000
+	ControlClick, TBitBtn7, A
+	WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
+
+	if (IsMarkedLeftFootP1() = true)
+	{
+		UnmarkLeftFootP1()
+	}
+	if (IsMarkedRightFootP1() = true)
+	{
+		UnmarkRightFootP1()
+	}
+	if (IsMarkedLeftFootP2() = true)
+	{
+		UnmarkLeftFootP2()
+	}
+	if (IsMarkedRightFootP2() = true)
+	{
+		UnmarkRightFootP2()
+	}
+
+	Control, Check, , TGroupButton3, A
+	ControlClick, TButton1, A
+	WinWaitActive, New Trial ahk_class #32770
+	ControlClick, Button1, A
+	WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
+	Control, Check, , AfxWnd406, A
+	ControlSetText, ThunderRT6TextBox1, %texto%
+	ControlClick, Button1, A
+	WinWaitActive, Trial classification: ahk_class #32770
+	ControlClick, Button1, A
+	WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
+	ControlClick, Button1, A
+}
+
+AdquireStanding(){
+	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
+	WinWaitActive, New Trial ahk_class ThunderRT6FormDC
+	ControlSetText, ThunderRT6TextBox4, Standing
+	ControlClick, Button4, A
+	WinWaitActive, New Trial ahk_class #32770
+	ControlClick, Button1, A
+	WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
+	WaitForControlEnabled("TBitBtn5")
+	ControlClick, TBitBtn5, A
+	MsgBox, 1, Captura de peso del paciente, Subir el paciente a la plataforma 1 y aceptar
+	IfMsgBox OK
+	{
+		ControlClick, TBitBtn3, A
+		Input,tecla,,{space}{enter}
+		ControlClick, TBitBtn2, A
+		ControlClick, Confirm, A
+		ControlClick, TBitBtn9, A
+		Sleep, 4000
+		ControlClick, TBitBtn8, A
+		WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
+
+		if (IsMarkedLeftFootP1() = false)
+		{
+			MarkLeftFootP1()
+		}
+		if (IsMarkedRightFootP1() = false)
+		{
+			MarkRightFootP1()
+		}
+		if (IsMarkedLeftFootP2() = true)
+		{
+			UnmarkLeftFootP2()
+		}
+		if (IsMarkedRightFootP2() = true)
+		{
+			UnmarkRightFootP2()
+		}
+
+		Control, Check, , TGroupButton3, A
+		ControlClick, TButton1, A
+		WinWaitActive, New Trial ahk_class #32770
+		ControlClick, Button1, A
+		WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
+		Control, Check, , AfxWnd407, A
+		ControlSetText, ThunderRT6TextBox1, Standing
+		ControlClick, Button1, A
+		WinWaitActive, Trial classification: ahk_class #32770
+		ControlClick, Button1, A
+		WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
+		ControlClick, Button1, A
+	}
+	IfMsgBox Cancel
+	{
+		ControlClick, TBitBtn6, A
 	}
 }

@@ -73,3 +73,46 @@ ExisteTrialProcessing(){
    }
    return false
 }
+
+WaitForControlEnabled(con){
+   Loop
+   {
+      if IsControlEnabled(con)
+      {
+         Return
+      }
+   }
+}
+
+WaitForControlVisible(con){
+   Loop
+   {
+      if IsControlVisible(con)
+      {
+         Return
+      }
+   }
+}
+
+IsControlEnabled(con){
+   ControlGet, b, Enabled, , %con%, A
+   if b = 1
+   {
+      return 1
+   }
+   return 0
+}
+
+IsControlVisible(con){
+   ControlGet, b, Visible, , %con%, A
+   if b = 1
+   {
+      return 1
+   }
+   return 0
+}
+
+ControlGetFocus(){
+   ControlGetFocus, con, A
+   return con
+}
