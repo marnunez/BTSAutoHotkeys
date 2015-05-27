@@ -31,8 +31,7 @@ f::
 	Control, Check, , ThunderRT6CheckBox4, A
 	Control, Check, , ThunderRT6CheckBox3, A
 	Control, Choose, 3, ThunderRT6ComboBox1, A
-	ControlGet, esta, Enabled, , ThunderRT6CheckBox1, A
-	if esta = 1
+	if Control.IsEnabled("ThunderRT6CheckBox1")
 	{
 		Control, Check, , ThunderRT6CheckBox1, A
 	}
@@ -42,11 +41,11 @@ return
 #IfWinActive, Data Computing ahk_class #32770
 space::
 Enter::
-ControlClick, Button1, A
+Control,Check,, Button1, A
 WinWaitActive, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 if ExisteTrialProcessing()
 {
-	ControlFocus, Button16, A
+	Control,Check,, Button16, A
 }
 return
 
@@ -55,23 +54,29 @@ e::
 ControlGetPos, , , PicWidth, PicHeight, ThunderRT6PictureBoxDC1, A
 MsgBox, %PicWidth%`t%PicHeight%
 Return
-p::
 
-ControlClick, ThunderRT6CommandButton2, A
-WinWait, Configurar ahk_class #32770
-ControlClick, Button7, A
+p::
+Control,Check,, ThunderRT6CommandButton2, A
+WinWaitActive, Configurar ahk_class #32770
+Control,Check,, Button7, A
 if A_OSVersion = WIN_7
 {
-	WinWait, PDFCreator 0.9.6 ahk_class ThunderRT6FormDC ahk_exe PDFCreator.exe
+	WinWaitActive, PDFCreator 0.9.6 ahk_class ThunderRT6FormDC ahk_exe PDFCreator.exe
 	ControlSetText, ThunderRT6TextBox6, %nombreArchivo%
-	Input,tecla,,{space}{enter}
-	ControlClick, ThunderRT6CommandButton7, A
-	WinWaitActive, Guardar como ahk_class #32770 ahk_exe PDFCreator.exe
-	ControlSetText, Edit1, C:\Users\marcha\Documents\pdf\%nombreArchivo%.pdf, A
 }
 Return
 
+q::
+Escape::
+Control,Check,,ThunderRT6CommandButton1,A
+Return
 
+#IfWinActive, PDFCreator 0.9.6 ahk_class ThunderRT6FormDC ahk_exe PDFCreator.exe
+space::
+Enter::
+Control,Check,, ThunderRT6CommandButton7, A
+WinWaitActive, Guardar como ahk_class #32770 ahk_exe PDFCreator.exe
+ControlSetText, Edit1, C:\Users\marcha\Documents\pdf\%nombreArchivo%.pdf, A
 
 ;**************************************************************
 ; Atajos de la ventana de trackeo
@@ -79,8 +84,7 @@ Return
 #IfWinActive, Select trials to process ahk_class ThunderRT6FormDC
 
 w::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput w
 }
@@ -107,8 +111,7 @@ SendInput {Up}
 return
 
 s::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput s
 }
@@ -135,8 +138,7 @@ SendInput {Down}
 return
 
 a::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput a
 }
@@ -153,8 +155,7 @@ SendInput {Up}
 return
 
 d::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput d
 }
@@ -170,19 +171,18 @@ SendInput {Down}
 return
 
 q::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput q
 }
 Else
 {
-ControlClick, Button5, A
+Control,Check,, Button5, A
 }
 Return
 
 Escape::
-ControlClick, Button5, A
+Control,Check,, Button5, A
 Return
 
 Enter::
@@ -190,7 +190,7 @@ SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila sele
 SendMessage, LB_GETTEXT, %ErrorLevel%, &next, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
 next := SubStr(next, 1,30)
 
-ControlClick, Button6, A
+Control,Check,, Button6, A
 WinWaitActive, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 Loop
 {
@@ -203,8 +203,7 @@ ControlFocus, Button15, A
 Return
 
 Space::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput {Space}
 }
@@ -214,7 +213,7 @@ else
 	SendMessage, LB_GETTEXT, %ErrorLevel%, &next, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
 	next := SubStr(next, 1,30)
 	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	Loop
 	{
 			if ExisteTrialProcessing()
@@ -228,15 +227,12 @@ else
 Return
 
 f::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput f
 }
 else
 {
-	
-
 	if next
 	{
 		ante := next
@@ -274,19 +270,17 @@ else
 Return
 
 c::
-ControlGetFocus, cont, A
 ControlGet, sel, Choice, , ThunderRT6ListBox1, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput c
 }
 else if sel != ""
 {
-	ControlGet, a, Enabled,, Button1
-	if a = 1
+	if Control.IsEnabled("Button1")
 	{
 		
-		ControlClick, Button1, A
+		Control,Check,, Button1, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
 		ControlFocus, Button2, A
 		WinWaitClose, Notas... ahk_class ThunderRT6FormDC
@@ -296,19 +290,17 @@ else if sel != ""
 Return
 
 +c::
-ControlGetFocus, cont, A
 ControlGet, sel, Choice, , ThunderRT6ListBox2, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput c
 }
 else if sel != ""
 {
-	ControlGet, a, Enabled,, Button3
-	if a = 1
+	if Control.IsEnabled("Button3")
 	{
 		
-		ControlClick, Button3, A
+		Control,Check,, Button3, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
 		ControlFocus, Button2, A
 		WinWaitClose, Notas... ahk_class ThunderRT6FormDC
@@ -328,8 +320,7 @@ Return
 #IfWinActive, Select Trials ahk_class ThunderRT6FormDC
 
 w::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput w
 }
@@ -351,8 +342,7 @@ SendInput {Up}
 return
 
 s::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput s
 }
@@ -374,8 +364,7 @@ SendInput {Down}
 return
 
 a::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput a
 }
@@ -392,8 +381,7 @@ SendInput {Up}
 return
 
 d::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput d
 }
@@ -410,19 +398,17 @@ SendInput {Down}
 return
 
 c::
-ControlGetFocus, cont, A
 ControlGet, sel, Choice, , ThunderRT6ListBox2, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput c
 }
 else if sel != ""
 {
-	ControlGet, a, Enabled,, Button3
-	if a = 1
+	if Control.IsEnabled("Button3")
 	{
 		
-		ControlClick, Button3, A
+		Control,Check,, Button3, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
 		ControlFocus, Button2, A
 		WinWaitClose, Notas... ahk_class ThunderRT6FormDC
@@ -432,19 +418,17 @@ else if sel != ""
 Return
 
 +c::
-ControlGetFocus, cont, A
 ControlGet, sel, Choice, , ThunderRT6ListBox1, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput c
 }
 else if sel != ""
 {
-	ControlGet, a, Enabled,, Button2
-	if a = 1
+	if Control.IsEnabled("Button2")
 	{
 		
-		ControlClick, Button2, A
+		Control,Check,, Button2, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
 		ControlFocus, Button2, A
 		WinWaitClose, Notas... ahk_class ThunderRT6FormDC
@@ -454,30 +438,28 @@ else if sel != ""
 Return
 
 q::
-ControlGetFocus, cont, A
-if cont = ThunderRT6TextBox1
+if Control.GetFocus() = "ThunderRT6TextBox1"
 {
 	SendInput q
 }
 Else
 {
-ControlClick, Button5, A
+	Control,Check,, Button5, A
 }
 Return
 
 Escape::
-ControlClick, Button5, A
+Control,Check,, Button5, A
 Return
 
 Enter::
 space::
-ControlClick, Button6, A
+Control,Check,, Button6, A
 WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 Control, Check, , ThunderRT6CheckBox4, A
 Control, Check, , ThunderRT6CheckBox3, A
 Control, Choose, 3, ThunderRT6ComboBox1, A
-ControlGet, esta, Enabled, , ThunderRT6CheckBox1, A
-if esta = 1
+if Control.IsEnabled("ThunderRT6CheckBox1")
 {
 	Control, Check, , ThunderRT6CheckBox1, A
 }
@@ -489,8 +471,6 @@ AppsKey::
 MouseGetPos, , , , cont
 if cont = ThunderRT6ListBox2
 {
-	;Click
-
 	ControlGet, tas, Choice, , ThunderRT6ListBox2, A
 	ControlGet, tas2, Choice, , ThunderRT6ListBox3, A
 	ControlGet, tas3, Choice, , ThunderRT6ListBox1, A
@@ -604,16 +584,15 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	Cinematica:
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	Control,Check,,ThunderRT6CheckBox2
 	Control,Choose,8,ThunderRT6ComboBox1
 	ControlSetText, ThunderRT6TextBox2, ES_km
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	Cinetica:
@@ -625,112 +604,103 @@ if cont = ThunderRT6ListBox2
 	{
 		nombreArchivo := nombreArchivo . "_der"
 	}
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	Control,Check,,ThunderRT6CheckBox2
 	Control,Choose,8,ThunderRT6ComboBox1
 	ControlSetText, ThunderRT6TextBox2, ES_kt
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	EMG8:
 	nombreArchivo := nombreArchivo . "_EMG8"
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox2, ES_km8e
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	EMG4:
 	nombreArchivo := nombreArchivo . "_EMG4"
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox2, ES_km4e
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	EMG5:
 	nombreArchivo := nombreArchivo . "_EMG5"
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox2, ES_km5e
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	EMG4L:
 	nombreArchivo := nombreArchivo . "_EMG4L"
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox2, ES_km4el
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	EMG4R:
 	nombreArchivo := nombreArchivo . "_EMG4R"
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox2, ES_km4er
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	EMG5R:
 	nombreArchivo := nombreArchivo . "_EMG5R"
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox2, ES_km5er
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	EMG5L:
 	nombreArchivo := nombreArchivo . "_EMG5L"
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox2, ES_km5el
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	Vastos:
 	nombreArchivo := nombreArchivo . "_Vastos"
-	
-	ControlClick, Button6, A
+	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
 	WinWaitActive, Informe ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox2, ES_km2e
-	ControlClick, ThunderRT6CommandButton3, A
+	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
 	AbrirArchivo:
@@ -808,15 +778,15 @@ WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm,
 WinWaitActive, New Trial ahk_class ThunderRT6FormDC
 texto := ReturnFirstLineClipbrd()
 ControlSetText, ThunderRT6TextBox4, %texto%
-ControlClick, Button4, A
+Control,Check,, Button4, A
 WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
+Control,Check,, Button1, A
 WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
-WaitForControlEnabled("TBitBtn5")
-ControlClick, TBitBtn5, A
-ControlClick, TBitBtn8, A
+Control.WaitEnabled("TBitBtn5")
+Control,Check,, TBitBtn5, A
+Control,Check,, TBitBtn8, A
 Input,tecla,,{space}{enter}
-ControlClick, TBitBtn7, A
+Control,Check,, TBitBtn7, A
 WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
 ControlGet, che, Checked, , TGroupButton3, A
@@ -848,16 +818,16 @@ if (IsMarkedRightFootP2() = true)
 }
 
 Input,tecla,,{space}{enter}
-ControlClick, TButton1, A
+Control,Check,, TButton1, A
 WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
+Control,Check,, Button1, A
 WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
 ControlSetText, ThunderRT6TextBox1, %texto%
-ControlClick, Button1, A
+Control,Check,, Button1, A
 WinWaitActive, Trial classification: ahk_class #32770
-ControlClick, Button1, A
+Control,Check,, Button1, A
 WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
-ControlClick, Button2, A
+Control,Check,, Button2, A
 return
 
 #e::
@@ -880,21 +850,22 @@ WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm,
 WinWaitActive, New Trial ahk_class ThunderRT6FormDC
 texto := ColorChoice
 ControlSetText, ThunderRT6TextBox4, %texto%
-ControlClick, Button4, A
+Control,Check,, Button4, A
 WinWaitActive, New Trial ahk_class #32770
-ControlClick, Button1, A
+Control,Check,, Button1, A
 WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
 Loop
 {
-	ControlGet, a, Enabled,, TBitBtn5
-	if a = 1 
-		break
+	if Control.IsEnabled("TBitBtn5")
+	{
+		Break
+	}
 }
-ControlClick, TBitBtn5, A
+Control,Check,, TBitBtn5, A
 KeyWait, Space, D
-ControlClick, TBitBtn8, A
+Control,Check,, TBitBtn8, A
 KeyWait, Space, U
-ControlClick, TBitBtn7, A
+Control,Check,, TBitBtn7, A
 WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
 ControlGet, che, Checked, , TGroupButton3, A
@@ -926,7 +897,7 @@ if (IsMarkedRightFootP2() = true)
 }
 
 Input,tecla,,{space}{enter}
-ControlClick, TButton1, A
+Control,Check,, TButton1, A
 return
 
 tab::
@@ -1095,7 +1066,7 @@ if ExisteBarra()
 	Y := Y + 30
 	Yf := Y - 500
 	MouseGetPos, Xo, Yo
-	Loop, 6
+	Loop, 8
 	{
 		MouseClickDrag, Right, %X%, %Y%, %X%, %Yf%, 0
 	}
@@ -1304,7 +1275,7 @@ if ExisteBarra()
 }
 else if ExisteTrialProcessing()
 {
-	ControlClick, Button16, A
+	Control,Check,, Button16, A
 }
 Return
 
@@ -1346,20 +1317,15 @@ Return
 ;##########################################
 
 ExisteBarra(){
-	WinGet, listacontroles, ControlList, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 
-	Loop, Parse, listacontroles ,`n
+	if Control.Exists("ThunderRT6ComboBox1","BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm")
 	{
-		if A_LoopField = ThunderRT6ComboBox1
+		if Control.IsVisible("ThunderRT6ComboBox1","BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm")
 		{
-			ControlGet, v, Visible, , ThunderRT6ComboBox1, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
-			if v = 1 
-			{
-				return true
-			}
+			Return true
 		}
 	}
-	return false
+	return False
 }
 
 varExist(ByRef v) { ; Requires 1.0.46+
@@ -1374,14 +1340,6 @@ GetScrollInfo() {
 SetScrollInfo(pos) {
   	ControlGet, hand, HWND, , ThunderRT6HScrollBar3
   	return DllCall("SetScrollPos","UInt",hand,"Int",SB_CTL := 0x2,"UInt",pos,"UInt",1)
-}
-
-ReturnFirstLineClipbrd() {
-	Loop, Parse, clipboard,`n,`r
-	{
-		return %A_LoopField%
-	}
-	Return
 }
 
 IsMarkedLeftFootP1() {
@@ -1533,15 +1491,15 @@ AdquireBarStanding(texto){
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
 	WinWaitActive, New Trial ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox4, %texto%
-	ControlClick, Button4, A
+	Control,Check,, Button4, A
 	WinWaitActive, New Trial ahk_class #32770
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
-	WaitForControlEnabled("TBitBtn5")
-	ControlClick, TBitBtn5, A
-	ControlClick, TBitBtn8, A
+	Control.WaitEnabled("TBitBtn5")
+	Control,Check,, TBitBtn5, A
+	Control,Check,, TBitBtn8, A
 	Sleep, 4000
-	ControlClick, TBitBtn7, A
+	Control,Check,, TBitBtn7, A
 	WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
 	if (IsMarkedLeftFootP1() = true)
@@ -1562,39 +1520,39 @@ AdquireBarStanding(texto){
 	}
 
 	Control, Check, , TGroupButton3, A
-	ControlClick, TButton1, A
+	Control,Check,, TButton1, A
 	WinWaitActive, New Trial ahk_class #32770
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
 	Control, Check, , AfxWnd406, A
 	ControlSetText, ThunderRT6TextBox1, %texto%
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinWaitActive, Trial classification: ahk_class #32770
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 }
 
 AdquireStanding(){
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1&, 1&
 	WinWaitActive, New Trial ahk_class ThunderRT6FormDC
 	ControlSetText, ThunderRT6TextBox4, Standing
-	ControlClick, Button4, A
+	Control,Check,, Button4, A
 	WinWaitActive, New Trial ahk_class #32770
-	ControlClick, Button1, A
+	Control,Check,, Button1, A
 	WinWaitActive, Acq. Manager - Setup: SetupACQ ahk_class TDaqDlg
-	WaitForControlEnabled("TBitBtn5")
-	ControlClick, TBitBtn5, A
+	Control.WaitEnabled("TBitBtn5")
+	Control,Check,, TBitBtn5, A
 	MsgBox, 1, Captura de peso del paciente, Subir el paciente a la plataforma 1 y aceptar
 	IfMsgBox OK
 	{
-		ControlClick, TBitBtn3, A
+		Control,Check,, TBitBtn3, A
 		Input,tecla,,{space}{enter}
-		ControlClick, TBitBtn2, A
-		ControlClick, Confirm, A
-		ControlClick, TBitBtn9, A
+		Control,Check,, TBitBtn2, A
+		Control,Check,, Confirm, A
+		Control,Check,, TBitBtn9, A
 		Sleep, 4000
-		ControlClick, TBitBtn8, A
+		Control,Check,, TBitBtn8, A
 		WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
 		if (IsMarkedLeftFootP1() = false)
@@ -1615,20 +1573,20 @@ AdquireStanding(){
 		}
 
 		Control, Check, , TGroupButton3, A
-		ControlClick, TButton1, A
+		Control,Check,, TButton1, A
 		WinWaitActive, New Trial ahk_class #32770
-		ControlClick, Button1, A
+		Control,Check,, Button1, A
 		WinWaitActive, Trial classification: ahk_class ThunderRT6FormDC
 		Control, Check, , AfxWnd407, A
 		ControlSetText, ThunderRT6TextBox1, Standing
-		ControlClick, Button1, A
+		Control,Check,, Button1, A
 		WinWaitActive, Trial classification: ahk_class #32770
-		ControlClick, Button1, A
+		Control,Check,, Button1, A
 		WinWaitActive, Trial classification: C:\Archivos de programa\BTS ahk_class #32770
-		ControlClick, Button1, A
+		Control,Check,, Button1, A
 	}
 	IfMsgBox Cancel
 	{
-		ControlClick, TBitBtn6, A
+		Control,Check,, TBitBtn6, A
 	}
 }

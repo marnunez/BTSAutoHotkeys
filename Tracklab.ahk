@@ -20,8 +20,7 @@ Return
 
 Right::
 d::
-
-ControlSend, SliderWndClass1, {Right}, Tracklab
+ControlSend, SliderWndClass1, {Right}, Tracklab ahk_class ThunderRT6MDIForm
 return
 
 +Right::
@@ -37,7 +36,6 @@ return
 
 Left::
 a::
-
 ControlSend, SliderWndClass1, {Left}, Tracklab
 return
 
@@ -53,72 +51,61 @@ return
 return
 
 q::
-BlockInput, On
-
+TogglePlatformOnOff("on")
+TimetoFrame()
 WinMenuSelectItem, Tracklab, , 6&, 2&
 WinWaitActive, Open model file. ahk_class #32770
 ControlSetText, Edit1, C:\Tracklab\Elic2std.XMF, A
-ControlClick, Button2, A
+Control,Check,, Button2, A
 WinWaitActive, Tracklab ahk_class ThunderRT6MDIForm
 ;Send C:\Tracklab\Elic2std.XMF{Enter}
 ;WinWait, Model Editor ahk_class ThunderRT6PictureBoxDC9
-WaitForControlVisible("ThunderRT6CommandButton1")
-ControlClick, ThunderRT6CommandButton1, A
+Control.WaitVisible("ThunderRT6CommandButton1")
+Control, Check, , ThunderRT6CommandButton1, A
 SendInput !-n!-x
-TimetoFrame()
-BlockInput, Off
 return
 
 e::
-BlockInput, On
+TimetoFrame()
+TogglePlatformOnOff("on")
 WinMenuSelectItem, Tracklab, , 6&, 2&
 WinWaitActive, Open model file. ahk_class #32770
 ControlSetText, Edit1, C:\Tracklab\piernader.XMF, A
-ControlClick, Button2, A
+Control,Check,, Button2, A
 WinWaitActive, Tracklab ahk_class ThunderRT6MDIForm
 ;Send C:\Tracklab\Elic2std.XMF{Enter}
 ;WinWait, Model Editor ahk_class ThunderRT6PictureBoxDC9
-WaitForControlVisible("ThunderRT6OptionButton1")
-ControlClick, ThunderRT6OptionButton1, A
+Control.WaitVisible("ThunderRT6OptionButton1")
+Control,Check,, ThunderRT6OptionButton1, A
 SendInput !-n!-x
-TimetoFrame()
-BlockInput, Off
 return
 
 r::
-BlockInput, On
-if IsControlEnabled("ThunderRT6CheckBox19")
-{
-	ControlClick, ThunderRT6CheckBox19
-}
 TimetoFrame()
-WinMenuSelectItem, Tracklab, , 6&, 2&
+TogglePlatformOnOff("on")
+WinMenuSelectItem, Tracklab ahk_class ThunderRT6MDIForm, , 6&, 2&
 WinWaitActive, Open model file. ahk_class #32770
 ControlSetText, Edit1, C:\Tracklab\Elic2wlk.XMF, A
-ControlClick, Button2, A
+Control,Check,, Button2, A
 WinWaitActive, Tracklab ahk_class ThunderRT6MDIForm
-;Send C:\Tracklab\Elic2std.XMF{Enter}
-;WinWait, Model Editor ahk_class ThunderRT6PictureBoxDC9
-WaitForControlVisible("ThunderRT6CommandButton1")
-ControlClick, ThunderRT6CommandButton1, A
+Control.WaitVisible("ThunderRT6CommandButton1")
+Control, Check, , ThunderRT6CommandButton1, A
 SendInput !-n!-x
-TimetoFrame()
-BlockInput, Off
 return
 
 g::
-WinMenuSelectItem, Tracklab, , 4&, 1&
+WinMenuSelectItem, Tracklab ahk_class ThunderRT6MDIForm, , 4&, 1&
 Return
 
 c::
-WinClose, Tracklab
+WinClose, Tracklab ahk_class ThunderRT6MDIForm
 WinWaitActive, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 Loop 400
 {
-		if ExisteTrialProcessing()
-		{
-			Break
-		}
+	if ExisteTrialProcessing()
+	{
+		Break
+	}
 }
 ControlFocus, Button17, A
 Return
@@ -157,7 +144,6 @@ if contq = AfxOleControl421
 			break
 		}
 	}
-	;Sleep, 600
 	SendInput {Down 10}{Enter}
 }
 return
@@ -208,7 +194,7 @@ Return
 
 #IfWinActive, Save reconstructed data as ... ahk_class #32770
 space::
-ControlClick, Button2, A
+Control,Check,, Button2, A
 WinWaitActive, Output data options ahk_class ThunderRT6FormDC
 ControlFocus, ThunderRT6TextBox2, A
 SendMessage, 177, 0, -1, ThunderRT6TextBox2, A
@@ -218,11 +204,11 @@ Return
 
 space::
 Enter::
-ControlClick, ThunderRT6CommandButton4, A
+Control,Check,, ThunderRT6CommandButton4, A
 Return
 
 tab::
-if ControlGetFocus() = ThunderRT6TextBox2
+if Control.GetFocus() = "ThunderRT6TextBox2"
 {
 	ControlFocus, ThunderRT6TextBox1, A
 	SendMessage, 177, 0, -1, ThunderRT6TextBox1, A
@@ -236,8 +222,7 @@ Return
 ;Cambia el display verde de tiempo a cuadros.
 TimetoFrame(){
 	BlockInput, MouseMove
-	MouseGetPos, Xo, Yo
-	
+	MouseGetPos, Xo, Yo	
 	SetMouseDelay, -1
 	MouseClick, , 332, 128, , 0
 	MouseMove, %Xo%, %Yo%, 0
@@ -245,8 +230,29 @@ TimetoFrame(){
 }
 
 TogglePlatform(){
-	If IsControlEnabled("ThunderRT6CheckBox19")
+	If Control.IsEnabled("ThunderRT6CheckBox19")
 	{
-		ControlClick, ThunderRT6CheckBox19
+		If Control.IsChecked("ThunderRT6CheckBox19")
+		{
+			Control, UnCheck, , ThunderRT6CheckBox19
+		}
+		Else
+		{
+			Control, Check, , ThunderRT6CheckBox19
+		}
+	}
+}
+
+TogglePlatformOnOff(onof:="on"){
+	If Control.IsEnabled("ThunderRT6CheckBox19")
+	{
+		If (onof = "on")
+		{
+			Control, Check, , ThunderRT6CheckBox19
+		}
+		If (onof = "off")
+		{
+			Control, UnCheck, , ThunderRT6CheckBox19
+		}
 	}
 }

@@ -23,9 +23,9 @@ DetectContextMenu(){
    ; Bit 4 of this flag is set if the thread is in menu mode. GUI_INMENUMODE = 0x4
 
    if (NumGet(GuiThreadInfo, 4) & 0x4)
-      Return 1 ; we've found a context menu
+      Return true ; we've found a context menu
    Else
-      Return 0
+      Return false
   }
 ;Devuelve el valor correcto de "Archivos de Programa" para este sistema operativo
 GetProgramFiles(){
@@ -58,61 +58,90 @@ GetInteger(ByRef @source, _pos){
 
 ;Chequea si existe el Control de Trial Processing
 ExisteTrialProcessing(){
-   WinGet, listacontroles, ControlList, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
-
-   Loop, Parse, listacontroles ,`n
-   {
-      if A_LoopField = ThunderRT6FormDC1
+      if Control.Exists("ThunderRT6FormDC1","BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm")
       {
-         ControlGet, v, Visible, ,Trial Processing, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
-         if v = 1 
+         if Control.IsVisible("Trial Processing","BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm")
          {
-            return true
+            Return true
          }
+      }
+   return false
+}
+
+ReturnFirstLineClipbrd() {
+   Loop, Parse, clipboard,`n,`r
+   {
+      return %A_LoopField%
+   }
+   Return
+}
+
+
+class Control{
+
+   IsEnabled(con,win:="A"){
+   ControlGet, b, Enabled, , %con%, %win%
+   if b = 1
+   {
+      return true
+   }
+   return false
+}
+
+IsChecked(con,win:="A"){
+   ControlGet, b, Checked, , %con%, %win%
+   if b = 1
+   {
+      return true
+   }
+   return false
+}
+
+GetFocus(win:="A"){
+   ControlGetFocus, con, %win%
+   return con
+}
+
+IsVisible(con,win:="A"){
+   ControlGet, b, Visible, , %con%, %win%
+   if b = 1
+   {
+      return true
+   }
+   return false
+}
+
+WaitEnabled(con,win:="A"){
+   Loop
+   {
+      if this.IsEnabled(con,win)
+      {
+         Return
+      }
+   }
+}
+
+WaitVisible(con,win:="A"){
+   Loop
+   {
+      if this.IsVisible(con,win)
+      {
+         Return
+      }
+   }
+}
+
+Exists(con,win:="A"){
+   WinGet, lista, ControlList, %win%
+
+   Loop, Parse, lista ,`n
+   {
+      if A_LoopField = %con%
+      {
+            return true
       }
    }
    return false
 }
 
-WaitForControlEnabled(con){
-   Loop
-   {
-      if IsControlEnabled(con)
-      {
-         Return
-      }
-   }
-}
-
-WaitForControlVisible(con){
-   Loop
-   {
-      if IsControlVisible(con)
-      {
-         Return
-      }
-   }
-}
-
-IsControlEnabled(con){
-   ControlGet, b, Enabled, , %con%, A
-   if b = 1
-   {
-      return 1
-   }
-   return 0
-}
-
-IsControlVisible(con){
-   ControlGet, b, Visible, , %con%, A
-   if b = 1
-   {
-      return 1
-   }
-   return 0
-}
-
-ControlGetFocus(){
-   ControlGetFocus, con, A
-   return con
 }
