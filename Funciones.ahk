@@ -80,68 +80,68 @@ ReturnFirstLineClipbrd() {
 class Control{
 
    IsEnabled(con,win:="A"){
-   ControlGet, b, Enabled, , %con%, %win%
-   if b = 1
-   {
-      return true
-   }
-   return false
-}
-
-IsChecked(con,win:="A"){
-   ControlGet, b, Checked, , %con%, %win%
-   if b = 1
-   {
-      return true
-   }
-   return false
-}
-
-GetFocus(win:="A"){
-   ControlGetFocus, con, %win%
-   return con
-}
-
-IsVisible(con,win:="A"){
-   ControlGet, b, Visible, , %con%, %win%
-   if b = 1
-   {
-      return true
-   }
-   return false
-}
-
-WaitEnabled(con,win:="A"){
-   Loop
-   {
-      if this.IsEnabled(con,win)
+      ControlGet, b, Enabled, , %con%, %win%
+      if b = 1
       {
-         Return
+         return true
+      }
+      return false
+   }
+
+   IsChecked(con,win:="A"){
+      ControlGet, b, Checked, , %con%, %win%
+      if b = 1
+      {
+         return true
+      }
+      return false
+   }
+
+   GetFocus(win:="A"){
+      ControlGetFocus, con, %win%
+      return con
+   }
+
+   IsVisible(con,win:="A"){
+      ControlGet, b, Visible, , %con%, %win%
+      if b = 1
+      {
+         return true
+      }
+      return false
+   }
+
+   WaitEnabled(con,win:="A"){
+      Loop
+      {
+         if this.IsEnabled(con,win)
+         {
+            Return
+         }
       }
    }
-}
 
-WaitVisible(con,win:="A"){
-   Loop
-   {
-      if this.IsVisible(con,win)
+   WaitVisible(con,win:="A"){
+      Loop
       {
-         Return
+         if this.IsVisible(con,win)
+         {
+            Return
+         }
       }
    }
-}
 
-Exists(con,win:="A"){
-   WinGet, lista, ControlList, %win%
+   Exists(con,win:="A"){
+      WinGet, lista, ControlList, %win%
 
-   Loop, Parse, lista ,`n
-   {
-      if A_LoopField = %con%
+      Loop, Parse, lista ,`n
       {
-            return true
+         if A_LoopField = %con%
+         {
+               return true
+         }
       }
+      return false
    }
-   return false
-}
 
 }

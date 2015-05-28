@@ -1287,12 +1287,25 @@ if ExisteBarra()
 else
 {
 	Gui, Add, Text, , Seleccione el tipo de EMG
-	Gui, Add, ListBox,% "R8" "gColorChoices" "vColorChoice" "Choose".ColorChoice, ||EMG8E|EMG4E|EMG4L|EMG4R|EMG5L|EMG5R|Vastos|
-	Gui, Add, Text, , % "Portapapeles: " . ReturnFirstLineClipbrd()
-	Gui, Show
+	if not ColorChoice or ColorChoice = ""
+	{
+		ColorChoice := ""
+	}
+	NumChoice := Object("", 1, "EMG8E", 2, "EMG4E", 3,"EMG4L", 4,"EMG4R", 5,"EMG5L", 6,"EMG5R", 7,"Vastos", 8)
+	Gui, Add, ListBox,% "R8 gColorChoices vColorChoice Choose" . NumChoice[ColorChoice], ||EMG8E|EMG4E|EMG4L|EMG4R|EMG5L|EMG5R|Vastos|
+	Gui, Add, Edit, , % "Portapapeles: " . ReturnFirstLineClipbrd()
+	Gui, -MinimizeBox -MaximizeBox
+	Gui, Show, AutoSize Center
 	Return
 
 	ColorChoices:
+	Gui, Submit
+	WinActivate, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
+	SetLastMode(ColorChoice)
+	Gui, Destroy
+	Return
+
+	GuiClose:
 	Gui, Submit
 	WinActivate, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 	SetLastMode(ColorChoice)
@@ -1312,6 +1325,7 @@ Else
 	MarkRightFootP1()
 }
 Return
+
 ;##########################################
 ;Funciones
 ;##########################################
@@ -1326,20 +1340,6 @@ ExisteBarra(){
 		}
 	}
 	return False
-}
-
-varExist(ByRef v) { ; Requires 1.0.46+
-   return &v = &n ? 0 : v = "" ? 2 : 1 
-}
-
-GetScrollInfo() {
-  ControlGet, hand, HWND, , ThunderRT6HScrollBar3
-  return DllCall("GetScrollPos","UInt",hand,"Int",SB_CTL := 0x2)
-}
-
-SetScrollInfo(pos) {
-  	ControlGet, hand, HWND, , ThunderRT6HScrollBar3
-  	return DllCall("SetScrollPos","UInt",hand,"Int",SB_CTL := 0x2,"UInt",pos,"UInt",1)
 }
 
 IsMarkedLeftFootP1() {
@@ -1499,6 +1499,7 @@ AdquireBarStanding(texto){
 	Control,Check,, TBitBtn5, A
 	Control,Check,, TBitBtn8, A
 	Sleep, 4000
+	SoundBeep
 	Control,Check,, TBitBtn7, A
 	WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
@@ -1552,6 +1553,7 @@ AdquireStanding(){
 		Control,Check,, Confirm, A
 		Control,Check,, TBitBtn9, A
 		Sleep, 4000
+		SoundBeep
 		Control,Check,, TBitBtn8, A
 		WinWaitActive, Platform parameters setup ahk_class TPlaPostCfgDlg
 
