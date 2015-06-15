@@ -144,4 +144,12 @@ class Control{
       return false
    }
 
+   Choose(con,pos,win:="A"){
+      Control,Choose,%pos%,%con%,%win%
+   }
+
+   Focus(con,win:="A"){
+      ControlFocus,%con%,%win%
+   }
+
 }

@@ -18,6 +18,22 @@ Menu, as, Add, 3 EMG, :EMG
 Menu, as, Add, 4 Abrir archivo..., AbrirArchivo
 Menu, as, Add, 5 Interpolar, Interpolar
 
+
+SetTimer, AlertaOrtesis, 420000
+	
+AlertaOrtesis:
+cadena := ReturnFirstLineClipbrd()
+if (InStr(cadena, "ortesis",false) or InStr(cadena, "valva",false))
+{
+	SoundBeep, 440, 500
+	MsgBox, 52, Alerta Ortesis, No olvidar sacar video de las ortesis!`nConservar la alerta?
+	IfMsgBox, No
+	{
+		SetTimer, AlertaOrtesis, Delete
+	}
+}
+Return
+
 ProgramFilesWin := GetProgramFiles()
 
 VarSetCapacity(ante,512)
@@ -25,6 +41,12 @@ VarSetCapacity(next,512)
 VarSetCapacity(last,512)
 
 #s::Suspend ;Inicio + S --> Deshabilita/Habilita todos los atajos (menos a sí mismo)
+
+#IfWinActive, Nueva  Sesión ahk_class ThunderRT6FormDC ahk_exe GaitEl30.exe
+SetTimer, AlertaOrtesis, 600000
+
+#IfWinActive, New Patient ahk_class ThunderRT6FormDC ahk_exe GaitEl30.exe
+SetTimer, AlertaOrtesis, 600000
 
 #IfWinActive, Select Visualization ahk_class ThunderRT6FormDC
 f::
@@ -348,18 +370,18 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	ControlFocus, ThunderRT6ListBox2, A
+	Control.Focus("ThunderRT6ListBox2")
 	SendInput {Down}
 }
 return
 
 +s::
-ControlFocus, ThunderRT6ListBox3, A
+Control.Focus("ThunderRT6ListBox3")
 SendInput {Down}
 Return
 
 Down::
-ControlFocus, ThunderRT6ListBox2, A
+Control.Focus("ThunderRT6ListBox2")
 SendInput {Down}
 return
 
@@ -370,13 +392,13 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	ControlFocus, ThunderRT6ListBox1, A
+	Control.Focus("ThunderRT6ListBox1")
 	SendInput {Left}
 }
 return
 
 Left::
-ControlFocus, ThunderRT6ListBox1, A
+Control.Focus("ThunderRT6ListBox1")
 SendInput {Up}
 return
 
@@ -387,13 +409,13 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	ControlFocus, ThunderRT6ListBox1, A
+	Control.Focus("ThunderRT6ListBox1")
 	SendInput {Right}
 }
 return
 
 Right::
-ControlFocus, ThunderRT6ListBox1, A
+Control.Focus("ThunderRT6ListBox1")
 SendInput {Down}
 return
 
@@ -410,9 +432,9 @@ else if sel != ""
 		
 		Control,Check,, Button3, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
-		ControlFocus, Button2, A
+		Control.Focus("Button2")
 		WinWaitClose, Notas... ahk_class ThunderRT6FormDC
-		ControlFocus, ThunderRT6ListBox2, A
+		Control.Focus("ThunderRT6ListBox2")
 	}
 }
 Return
@@ -430,9 +452,9 @@ else if sel != ""
 		
 		Control,Check,, Button2, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
-		ControlFocus, Button2, A
+		Control.Focus("Button2")
 		WinWaitClose, Notas... ahk_class ThunderRT6FormDC
-		ControlFocus, ThunderRT6ListBox1, A
+		Control.Focus("ThunderRT6ListBox1")
 	}
 }
 Return
@@ -463,7 +485,7 @@ if Control.IsEnabled("ThunderRT6CheckBox1")
 {
 	Control, Check, , ThunderRT6CheckBox1, A
 }
-ControlFocus, Button1, A
+Control.Focus("Button1")
 Return
 
 RButton::
@@ -733,7 +755,7 @@ Else
 }
 
 ^f::
-ControlFocus, ThunderRT6TextBox1, A
+Control.Focus("ThunderRT6TextBox1")
 Return
 
 ;**********************************************************
@@ -905,18 +927,18 @@ tab::
 	if ExisteTrialProcessing()
 	{
 		
-		ControlGetFocus, ptab, A
+		ptab := Control.GetFocus()
 		if ptab = Button15
 		{
-			ControlFocus, Button17, A
+			Control.Focus("Button17")
 		}
 		else if ptab = Button17
 		{
-			ControlFocus, Button16, A
+			Control.Focus("Button16")
 		}
 		else if ptab = Button16
 		{
-			ControlFocus, Button15, A
+			Control.Focus("Button15")
 		}
 	}
 	Else
@@ -927,7 +949,6 @@ tab::
 Return
 
 r::
-
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 5&
 WinWaitActive, Select trials to process ahk_class ThunderRT6FormDC
 
@@ -955,27 +976,24 @@ Else
 Sleep 1
 
 SendMessage, LB_FINDSTRING, -1, &ante, ThunderRT6ListBox1, A ;Busco el texto
-;MsgBox, %ErrorLevel%
 if ErrorLevel = 4294967295
 {
 	next := ante
-	;MsgBox, %ante%`n%next%
 	return
 }
 SendMessage, LB_SETCURSEL, %ErrorLevel%, 0, ThunderRT6ListBox1, A ;Me muevo al encontrado
 Return
 
 t::
-
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 2& , 1&
 WinWaitActive, Select Trials ahk_class ThunderRT6FormDC
-ControlFocus, ThunderRT6ListBox2, A
+Control.Focus("ThunderRT6ListBox2")
 Return
 
 n::
-
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1& , 3&
 WinWaitActive, New Patient ahk_class ThunderRT6FormDC
+Control.Choose("ThunderRT6ComboBox1",1)
 Return
 
 ;*****************************************************

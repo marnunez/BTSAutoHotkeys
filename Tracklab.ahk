@@ -132,8 +132,9 @@ if contq = AfxOleControl421
 return
 
 ~^RButton::
-MouseGetPos, MouseX, MouseY, ,contq,1
-if contq = AfxOleControl421
+MouseGetPos, MouseX, MouseY, ,contq, 1
+PixelGetColor, colo, %MouseX%, %MouseY%
+if colo = 0xFFFFFF
 {
 	SendInput {Down 9}{Enter}
 	Loop 1000
@@ -150,7 +151,8 @@ return
 
 ~+RButton::
 MouseGetPos, MouseX, MouseY, ,contq,1
-if contq = AfxOleControl421
+PixelGetColor, colo, %MouseX%, %MouseY%
+if colo = 0xFFFFFF
 {
 	Loop 100
 	{
@@ -164,7 +166,8 @@ return
 
 ~!RButton::
 MouseGetPos, MouseX, MouseY, ,contq,1
-if contq = AfxOleControl421
+PixelGetColor, colo, %MouseX%, %MouseY%
+if colo = 0xFFFFFF
 {
 	Loop 100
 	{
@@ -178,7 +181,8 @@ return
 
 MButton::
 MouseGetPos, MouseX, MouseY, ,contq
-if contq = AfxOleControl421
+PixelGetColor, colo, %MouseX%, %MouseY%
+if colo = 0xFFFFFF
 {
 	SendInput {Click Right}{Down 8}{Enter}
 }
