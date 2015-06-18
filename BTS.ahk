@@ -8,11 +8,13 @@ Menu, as, Add, 2 Cinetica, Cinetica
 Menu, EMG, Add, 1 EMG8, EMG8
 Menu, EMG, Add, 2 EMG4, EMG4
 Menu, EMG, Add, 3 EMG5, EMG5
-Menu, EMG, Add, 4 EMG4L, EMG4L
-Menu, EMG, Add, 5 EMG4R, EMG4R
-Menu, EMG, Add, 6 EMG5L, EMG5L
-Menu, EMG, Add, 7 EMG5R, EMG5R
-Menu, EMG, Add, 8 Vastos, Vastos
+Menu, EMG, Add, 4 EMG2L, EMG2L
+Menu, EMG, Add, 5 EMG2R, EMG2R
+Menu, EMG, Add, 6 EMG4L, EMG4L
+Menu, EMG, Add, 7 EMG4R, EMG4R
+Menu, EMG, Add, 8 EMG5L, EMG5L
+Menu, EMG, Add, 9 EMG5R, EMG5R
+Menu, EMG, Add, 10 Vastos, Vastos
 
 Menu, as, Add, 3 EMG, :EMG
 Menu, as, Add, 4 Abrir archivo..., AbrirArchivo
@@ -20,26 +22,13 @@ Menu, as, Add, 5 Interpolar, Interpolar
 
 
 SetTimer, AlertaOrtesis, 420000
-	
-AlertaOrtesis:
-cadena := ReturnFirstLineClipbrd()
-if (InStr(cadena, "ortesis",false) or InStr(cadena, "valva",false))
-{
-	SoundBeep, 440, 500
-	MsgBox, 52, Alerta Ortesis, No olvidar sacar video de las ortesis!`nConservar la alerta?
-	IfMsgBox, No
-	{
-		SetTimer, AlertaOrtesis, Delete
-	}
-}
-Return
 
 ProgramFilesWin := GetProgramFiles()
 
 VarSetCapacity(ante,512)
 VarSetCapacity(next,512)
 VarSetCapacity(last,512)
-
+	
 #s::Suspend ;Inicio + S --> Deshabilita/Habilita todos los atajos (menos a sí mismo)
 
 #IfWinActive, Nueva  Sesión ahk_class ThunderRT6FormDC ahk_exe GaitEl30.exe
@@ -50,15 +39,20 @@ SetTimer, AlertaOrtesis, 600000
 
 #IfWinActive, Select Visualization ahk_class ThunderRT6FormDC
 f::
-	Control, Check, , ThunderRT6CheckBox4, A
-	Control, Check, , ThunderRT6CheckBox3, A
-	Control, Choose, 3, ThunderRT6ComboBox1, A
-	if Control.IsEnabled("ThunderRT6CheckBox1")
-	{
-		Control, Check, , ThunderRT6CheckBox1, A
-	}
-	ControlFocus, Button1, A
+Control, Check, , ThunderRT6CheckBox4, A
+Control, Check, , ThunderRT6CheckBox3, A
+Control, Choose, 3, ThunderRT6ComboBox1, A
+if Control.IsEnabled("ThunderRT6CheckBox1")
+{
+	Control, Check, , ThunderRT6CheckBox1, A
+}
+ControlFocus, Button1, A
 return
+
+q::
+Escape::
+Control, Check, , Button2, A
+Return
 
 #IfWinActive, Data Computing ahk_class #32770
 space::
@@ -166,13 +160,13 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	ControlFocus, ThunderRT6ListBox2, A
+	Control.Focus("ThunderRT6ListBox2")
 	SendInput {Left}
 }
 return
 
 Left::
-ControlFocus, ThunderRT6ListBox2, A
+Control.Focus("ThunderRT6ListBox2")
 SendInput {Up}
 return
 
@@ -183,12 +177,13 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	ControlFocus, ThunderRT6ListBox2, A
+	Control.Focus("ThunderRT6ListBox2")
 	SendInput {Down}
 }
 return
+
 Right::
-ControlFocus, ThunderRT6ListBox2, A
+Control.Focus("ThunderRT6ListBox2")
 SendInput {Down}
 return
 
@@ -221,7 +216,7 @@ Loop
 			Break
 		}
 }
-ControlFocus, Button15, A
+Control.Focus("Button15")
 Return
 
 Space::
@@ -244,7 +239,7 @@ else
 			}
 	}
 	WinActivate, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
-	ControlFocus, Button15, A
+	Control.Focus("Button15")
 }
 Return
 
@@ -304,9 +299,9 @@ else if sel != ""
 		
 		Control,Check,, Button1, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
-		ControlFocus, Button2, A
+		Control.Focus("Button2")
 		WinWaitClose, Notas... ahk_class ThunderRT6FormDC
-		ControlFocus, ThunderRT6ListBox1, A
+		Control.Focus("ThunderRT6ListBox1")
 	}
 }
 Return
@@ -324,15 +319,15 @@ else if sel != ""
 		
 		Control,Check,, Button3, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
-		ControlFocus, Button2, A
+		Control.Focus("Button2")
 		WinWaitClose, Notas... ahk_class ThunderRT6FormDC
-		ControlFocus, ThunderRT6ListBox2, A
+		Control.Focus("ThunderRT6ListBox2")
 	}
 }
 Return
 
 ^f::
-ControlFocus, ThunderRT6TextBox1, A
+Control.Focus("ThunderRT6TextBox1")
 Return
 
 ;**************************************************************
@@ -348,18 +343,18 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	ControlFocus, ThunderRT6ListBox2, A
+	Control.Focus("ThunderRT6ListBox2")
 	SendInput {Up}
 }
 return
 
 +w::
-ControlFocus, ThunderRT6ListBox3, A
+Control.Focus("ThunderRT6ListBox3")
 SendInput {Up}
 Return
 
 Up::
-ControlFocus, ThunderRT6ListBox2, A
+Control.Focus("ThunderRT6ListBox2")
 SendInput {Up}
 return
 
@@ -474,8 +469,27 @@ Escape::
 Control,Check,, Button5, A
 Return
 
-Enter::
 space::
+if Control.GetFocus() = "ThunderRT6TextBox1"
+{
+	SendInput {Space}
+}
+Else
+{
+	Control,Check,, Button6, A
+	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
+	Control, Check, , ThunderRT6CheckBox4, A
+	Control, Check, , ThunderRT6CheckBox3, A
+	Control, Choose, 3, ThunderRT6ComboBox1, A
+	if Control.IsEnabled("ThunderRT6CheckBox1")
+	{
+		Control, Check, , ThunderRT6CheckBox1, A
+	}
+	Control.Focus("Button1")
+}
+Return
+
+Enter::
 Control,Check,, Button6, A
 WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 Control, Check, , ThunderRT6CheckBox4, A
@@ -606,6 +620,7 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	Cinematica:
+	Sleep 20
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -618,6 +633,7 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	Cinetica:
+	Sleep 20
 	if (P1 = "L" || P2 = "L")
 	{
 		nombreArchivo := nombreArchivo . "_izq"
@@ -638,6 +654,7 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	EMG8:
+	Sleep 20
 	nombreArchivo := nombreArchivo . "_EMG8"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
@@ -649,6 +666,7 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	EMG4:
+	Sleep 20
 	nombreArchivo := nombreArchivo . "_EMG4"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
@@ -660,6 +678,7 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	EMG5:
+	Sleep 20
 	nombreArchivo := nombreArchivo . "_EMG5"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
@@ -670,7 +689,32 @@ if cont = ThunderRT6ListBox2
 	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
+	EMG2L:
+	Sleep 20
+	nombreArchivo := nombreArchivo . "_EMG2L"
+	Control,Check,, Button6, A
+	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
+	Control,Check,, Button1, A
+	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
+	WinWaitActive, Informe ahk_class ThunderRT6FormDC
+	ControlSetText, ThunderRT6TextBox2, ES_km2el
+	Control,Check,, ThunderRT6CommandButton3, A
+	Return
+
+	EMG2R:
+	Sleep 20
+	nombreArchivo := nombreArchivo . "_EMG2R"
+	Control,Check,, Button6, A
+	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
+	Control,Check,, Button1, A
+	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
+	WinWaitActive, Informe ahk_class ThunderRT6FormDC
+	ControlSetText, ThunderRT6TextBox2, ES_km2er
+	Control,Check,, ThunderRT6CommandButton3, A
+	Return
+
 	EMG4L:
+	Sleep 20
 	nombreArchivo := nombreArchivo . "_EMG4L"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
@@ -682,6 +726,7 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	EMG4R:
+	Sleep 20
 	nombreArchivo := nombreArchivo . "_EMG4R"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
@@ -692,18 +737,8 @@ if cont = ThunderRT6ListBox2
 	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
-	EMG5R:
-	nombreArchivo := nombreArchivo . "_EMG5R"
-	Control,Check,, Button6, A
-	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
-	Control,Check,, Button1, A
-	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
-	WinWaitActive, Informe ahk_class ThunderRT6FormDC
-	ControlSetText, ThunderRT6TextBox2, ES_km5er
-	Control,Check,, ThunderRT6CommandButton3, A
-	Return
-
 	EMG5L:
+	Sleep 20
 	nombreArchivo := nombreArchivo . "_EMG5L"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
@@ -714,7 +749,20 @@ if cont = ThunderRT6ListBox2
 	Control,Check,, ThunderRT6CommandButton3, A
 	Return
 
+	EMG5R:
+	Sleep 20
+	nombreArchivo := nombreArchivo . "_EMG5R"
+	Control,Check,, Button6, A
+	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
+	Control,Check,, Button1, A
+	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , Reporte, Report
+	WinWaitActive, Informe ahk_class ThunderRT6FormDC
+	ControlSetText, ThunderRT6TextBox2, ES_km5er
+	Control,Check,, ThunderRT6CommandButton3, A
+	Return
+
 	Vastos:
+	Sleep 20
 	nombreArchivo := nombreArchivo . "_Vastos"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
@@ -726,6 +774,7 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	AbrirArchivo:
+	Sleep 20
 	IfExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RIC
 	{
 		Run, explorer.exe /select`, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RIC
@@ -741,6 +790,7 @@ if cont = ThunderRT6ListBox2
 	Return
 
 	Interpolar:
+	Sleep 20
 	FileCopy, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%-%A_Now%.RAW.bkp
 	FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\%nombreArchivo%.RAW
 	RunWait INTERP2.EXE %nombreArchivo%.RAW INTER.RAW 100, C:\Archivos de programa\BTS Bioengineering\Gaitel30\Exe\
@@ -856,7 +906,7 @@ return
 if not ColorChoice or ColorChoice = ""
 {
 	Gui, Add, Text, , Seleccione el tipo de EMG
-	Gui, Add, ListBox, R8 gColorChoice vColorChoice Choose1, ||EMG8E|EMG4E|EMG4L|EMG4R|EMG5L|EMG5R|Vastos|
+	Gui, Add, ListBox, R10 gColorChoice vColorChoice Choose1, ||EMG8E|EMG4E|EMG4L|EMG4R|EMG5L|EMG5R|EMG2L|EMG2R|Vastos|
 	Gui, Show
 	Return
 
@@ -990,7 +1040,7 @@ WinWaitActive, Select Trials ahk_class ThunderRT6FormDC
 Control.Focus("ThunderRT6ListBox2")
 Return
 
-n::
+#n::
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 1& , 3&
 WinWaitActive, New Patient ahk_class ThunderRT6FormDC
 Control.Choose("ThunderRT6ComboBox1",1)
@@ -1309,8 +1359,8 @@ else
 	{
 		ColorChoice := ""
 	}
-	NumChoice := Object("", 1, "EMG8E", 2, "EMG4E", 3,"EMG4L", 4,"EMG4R", 5,"EMG5L", 6,"EMG5R", 7,"Vastos", 8)
-	Gui, Add, ListBox,% "R8 gColorChoices vColorChoice Choose" . NumChoice[ColorChoice], ||EMG8E|EMG4E|EMG4L|EMG4R|EMG5L|EMG5R|Vastos|
+	NumChoice := Object("", 1, "EMG8E", 2, "EMG4E", 3,"EMG4L", 4,"EMG4R", 5,"EMG5L", 6,"EMG5R", 7, "EMG2L", 8, "EMG2R", 9,"Vastos", 10)
+	Gui, Add, ListBox,% "R10 gColorChoices vColorChoice Choose" . NumChoice[ColorChoice], ||EMG8E|EMG4E|EMG4L|EMG4R|EMG5L|EMG5R|EMG2L|EMG2R|Vastos|
 	Gui, Add, Edit, , % "Portapapeles: " . ReturnFirstLineClipbrd()
 	Gui, -MinimizeBox -MaximizeBox
 	Gui, Show, AutoSize Center
@@ -1498,6 +1548,16 @@ SetLastMode(mode) {
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 		FileAppend, 8TV2PL5L.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
 	}
+	else if mode = EMG2L
+	{
+		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+		FileAppend, 8TV2PL2L.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+	}
+	else if mode = EMG2R
+	{
+		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+		FileAppend, 8TV2PL2R.ACQ, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
+	}
 	else
 	{
 		FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\ACQLAST.MOD
@@ -1610,3 +1670,16 @@ AdquireStanding(){
 		Control,Check,, TBitBtn6, A
 	}
 }
+
+AlertaOrtesis:
+cadena := ReturnFirstLineClipbrd()
+if (InStr(cadena, "ortesis",false) or InStr(cadena, "valva",false))
+{
+	SoundBeep, 440, 500
+	MsgBox, 52, Alerta Ortesis, No olvidar sacar video de las ortesis!`nConservar la alerta?
+	IfMsgBox, No
+	{
+		SetTimer, AlertaOrtesis, Delete
+	}
+}
+Return

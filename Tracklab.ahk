@@ -53,43 +53,21 @@ return
 q::
 TogglePlatformOnOff("on")
 TimetoFrame()
-WinMenuSelectItem, Tracklab, , 6&, 2&
-WinWaitActive, Open model file. ahk_class #32770
-ControlSetText, Edit1, C:\Tracklab\Elic2std.XMF, A
-Control,Check,, Button2, A
-WinWaitActive, Tracklab ahk_class ThunderRT6MDIForm
-;Send C:\Tracklab\Elic2std.XMF{Enter}
-;WinWait, Model Editor ahk_class ThunderRT6PictureBoxDC9
-Control.WaitVisible("ThunderRT6CommandButton1")
-Control, Check, , ThunderRT6CommandButton1, A
+OpenModel("Elic2std.XMF","ThunderRT6CommandButton1")
 SendInput !-n!-x
 return
 
 e::
-TimetoFrame()
 TogglePlatformOnOff("on")
-WinMenuSelectItem, Tracklab, , 6&, 2&
-WinWaitActive, Open model file. ahk_class #32770
-ControlSetText, Edit1, C:\Tracklab\piernader.XMF, A
-Control,Check,, Button2, A
-WinWaitActive, Tracklab ahk_class ThunderRT6MDIForm
-;Send C:\Tracklab\Elic2std.XMF{Enter}
-;WinWait, Model Editor ahk_class ThunderRT6PictureBoxDC9
-Control.WaitVisible("ThunderRT6OptionButton1")
-Control,Check,, ThunderRT6OptionButton1, A
+TimetoFrame()
+OpenModel("piernader.XMF","ThunderRT6OptionButton1")
 SendInput !-n!-x
 return
 
 r::
-TimetoFrame()
 TogglePlatformOnOff("on")
-WinMenuSelectItem, Tracklab ahk_class ThunderRT6MDIForm, , 6&, 2&
-WinWaitActive, Open model file. ahk_class #32770
-ControlSetText, Edit1, C:\Tracklab\Elic2wlk.XMF, A
-Control,Check,, Button2, A
-WinWaitActive, Tracklab ahk_class ThunderRT6MDIForm
-Control.WaitVisible("ThunderRT6CommandButton1")
-Control, Check, , ThunderRT6CommandButton1, A
+TimetoFrame()
+OpenModel("Elic2wlk.XMF","ThunderRT6CommandButton1")
 SendInput !-n!-x
 return
 
@@ -259,4 +237,14 @@ TogglePlatformOnOff(onof:="on"){
 			Control, UnCheck, , ThunderRT6CheckBox19
 		}
 	}
+}
+OpenModel(model,button){
+	WinActivate, Tracklab ahk_class ThunderRT6MDIForm
+	WinMenuSelectItem, Tracklab, , 6&, 2&
+	WinWaitActive, Open model file. ahk_class #32770
+	ControlSetText, Edit1, C:\Tracklab\%model%, A
+	Control,Check,, Button2, A
+	WinWaitActive, Tracklab ahk_class ThunderRT6MDIForm
+	Control.WaitVisible(%button%)
+	Control, Check, , %button%, A
 }
