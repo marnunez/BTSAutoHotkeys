@@ -46,7 +46,7 @@ if Control.IsEnabled("ThunderRT6CheckBox1")
 {
 	Control, Check, , ThunderRT6CheckBox1, A
 }
-ControlFocus, Button1, A
+Control.Focus("Button1")
 return
 
 q::
@@ -106,7 +106,7 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	ControlFocus, ThunderRT6ListBox1, A
+	Control.Focus("ThunderRT6ListBox1")
 	SendInput {Up}
 	/*
 	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
@@ -117,12 +117,12 @@ else
 return
 
 +w::
-ControlFocus, ThunderRT6ListBox3, A
+Control.Focus("ThunderRT6ListBox3")
 SendInput {Up}
 Return
 
 Up::
-ControlFocus, ThunderRT6ListBox1, A
+Control.Focus("ThunderRT6ListBox1")
 SendInput {Up}
 return
 
@@ -133,7 +133,7 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	ControlFocus, ThunderRT6ListBox1, A
+	Control.Focus("ThunderRT6ListBox1")
 	SendInput {Down}
 	/*
 	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
@@ -144,12 +144,12 @@ else
 return
 
 +s::
-ControlFocus, ThunderRT6ListBox3, A
+Control.Focus("ThunderRT6ListBox3")
 SendInput {Down}
 Return
 
 Down::
-ControlFocus, ThunderRT6ListBox1, A
+Control.Focus("ThunderRT6ListBox1")
 SendInput {Down}
 return
 

@@ -85,7 +85,7 @@ Loop 400
 		Break
 	}
 }
-ControlFocus, Button17, A
+Control.Focus("Button17")
 Return
 
 ~LButton::
@@ -178,7 +178,7 @@ Return
 space::
 Control,Check,, Button2, A
 WinWaitActive, Output data options ahk_class ThunderRT6FormDC
-ControlFocus, ThunderRT6TextBox2, A
+Control.Focus("ThunderRT6TextBox2")
 SendMessage, 177, 0, -1, ThunderRT6TextBox2, A
 Return
 
@@ -192,7 +192,7 @@ Return
 tab::
 if Control.GetFocus() = "ThunderRT6TextBox2"
 {
-	ControlFocus, ThunderRT6TextBox1, A
+	Control.Focus("ThunderRT6TextBox1")
 	SendMessage, 177, 0, -1, ThunderRT6TextBox1, A
 }
 else 
@@ -211,6 +211,7 @@ TimetoFrame(){
 	BlockInput, MouseMoveOff
 }
 
+;Muestra o oculta las plataformas de fuerza
 TogglePlatform(){
 	If Control.IsEnabled("ThunderRT6CheckBox19")
 	{
@@ -225,6 +226,7 @@ TogglePlatform(){
 	}
 }
 
+;Idem anterior, pero con parámetro on/off
 TogglePlatformOnOff(onof:="on"){
 	If Control.IsEnabled("ThunderRT6CheckBox19")
 	{
@@ -238,6 +240,8 @@ TogglePlatformOnOff(onof:="on"){
 		}
 	}
 }
+
+;Abre el modelo "model" y presiona "button" una vez abierto
 OpenModel(model,button){
 	WinActivate, Tracklab ahk_class ThunderRT6MDIForm
 	WinMenuSelectItem, Tracklab, , 6&, 2&
