@@ -132,7 +132,7 @@ MouseGetPos, MouseX, MouseY, ,contq,1
 PixelGetColor, colo, %MouseX%, %MouseY%
 if colo = 0xFFFFFF
 {
-	Loop 100
+	Loop 200
 	{
 		if DetectContextMenu()
 		{
@@ -147,7 +147,7 @@ MouseGetPos, MouseX, MouseY, ,contq,1
 PixelGetColor, colo, %MouseX%, %MouseY%
 if colo = 0xFFFFFF
 {
-	Loop 100
+	Loop 200
 	{
 		if DetectContextMenu()
 		{

@@ -3,8 +3,8 @@
 #Persistent
 #Hotstring NoMouse
 
-Menu, as, Add, 1 Cinematica, Cinematica
-Menu, as, Add, 2 Cinetica, Cinetica
+Menu, 2:TrialSelectionContextualMenu, Add, 1 Cinematica, Cinematica
+Menu, 2:TrialSelectionContextualMenu, Add, 2 Cinetica, Cinetica
 Menu, EMG, Add, 1 EMG8, EMG8
 Menu, EMG, Add, 2 EMG4, EMG4
 Menu, EMG, Add, 3 EMG5, EMG5
@@ -16,10 +16,11 @@ Menu, EMG, Add, 8 EMG5L, EMG5L
 Menu, EMG, Add, 9 EMG5R, EMG5R
 Menu, EMG, Add, 10 Vastos, Vastos
 
-Menu, as, Add, 3 EMG, :EMG
-Menu, as, Add, 4 Abrir archivo..., AbrirArchivo
-Menu, as, Add, 5 Interpolar, Interpolar
+Menu, 2:TrialSelectionContextualMenu, Add, 3 EMG, :EMG
+Menu, 2:TrialSelectionContextualMenu, Add, 4 Abrir archivo..., AbrirArchivo
+Menu, 2:TrialSelectionContextualMenu, Add, 5 Interpolar, 2:Interpolar
 
+Menu, 1:TrialProcessingContextualMenu, Add, 1 Interpolar, 1:Interpolar
 
 SetTimer, AlertaOrtesis, 420000
 
@@ -95,7 +96,7 @@ WinWaitActive, Guardar como ahk_class #32770 ahk_exe PDFCreator.exe
 ControlSetText, Edit1, C:\Users\marcha\Documents\pdf\%nombreArchivo%.pdf, A
 
 ;**************************************************************
-; Atajos de la ventana de trackeo
+; Atajos de la ventana de trackeo ("Select trials to process")
 ;**************************************************************
 #IfWinActive, Select trials to process ahk_class ThunderRT6FormDC
 
@@ -330,6 +331,68 @@ Return
 Control.Focus("ThunderRT6TextBox1")
 Return
 
+RButton::
+AppsKey::
+MouseGetPos, , , , cont
+if cont = ThunderRT6ListBox1
+{
+	ControlGet, tas, Choice, , ThunderRT6ListBox1, A
+	ControlGet, tas2, Choice, , ThunderRT6ListBox3, A
+	ControlGet, tas3, Choice, , ThunderRT6ListBox2, A
+	Loop, Parse, tas2, %A_Space%
+	{
+		idpaciente = %A_LoopField%
+		Break
+	}
+	Loop, Parse, tas3, %A_Space%
+	{
+		idSesionNum = %A_LoopField%
+		Break
+	}
+	startId := RegExMatch(tas, "\d\w|__")
+	idTrial := SubStr(tas, startId,2)
+	startId := RegExMatch(tas, "\w\s\w\s\w\s\w")
+	P1 := SubStr(tas, startId,1)
+	P2 := SubStr(tas, startId+2,1)
+	idSesionNum := Chr(idSesionNum + 96)
+	largo := StrLen(idpaciente)
+	largo2 := 5 - largo
+	equis = 
+	Loop, %largo2%
+	{
+		equis := equis . "x"
+	}
+	nombreArchivo = %idpaciente%%equis%%idSesionNum%%idTrial%
+
+	1:GuiContextMenu:
+	ControlGet, texto, Choice, , ThunderRT6ListBox2, A
+	SendMessage, LB_GETSELCOUNT, 0, 0, ThunderRT6ListBox2, A ; Chequear cuantos trials hay seleccionados
+	Cantidad = %ErrorLevel%
+	if %texto%
+	{
+		ifExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.raw
+		{
+			Menu, 1:TrialProcessingContextualMenu, Enable, 1 Interpolar
+		}
+		Else
+		{
+			Menu, 1:TrialProcessingContextualMenu, Disable, 1 Interpolar
+		}
+		
+		Menu, 1:TrialProcessingContextualMenu, Show
+	}
+	return
+
+	1:Interpolar:
+	Sleep 20
+	FileCopy, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%-%A_Now%.RAW.bkp
+	FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\%nombreArchivo%.RAW
+	RunWait INTERP2.EXE %nombreArchivo%.RAW INTER.RAW 100, C:\Archivos de programa\BTS Bioengineering\Gaitel30\Exe\
+	FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\INTER.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW,1
+	FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\%nombreArchivo%.RAW
+	Return
+}
+
 ;**************************************************************
 ; Atajos de la ventana de procesado de trials
 ;**************************************************************
@@ -535,7 +598,7 @@ if cont = ThunderRT6ListBox2
 	}
 	nombreArchivo = %idpaciente%%equis%%idSesionNum%%idTrial%
 
-	GuiContextMenu:
+	2:GuiContextMenu:
 	ControlGet, texto, Choice, , ThunderRT6ListBox2, A
 	SendMessage, LB_GETSELCOUNT, 0, 0, ThunderRT6ListBox2, A ; Chequear cuantos trials hay seleccionados
 	Cantidad = %ErrorLevel%
@@ -546,22 +609,32 @@ if cont = ThunderRT6ListBox2
 
 			if (P1 = "N" && P2 = "N")
 			{
-				Menu, as, Disable, 2 Cinetica
+				Menu, 2:TrialSelectionContextualMenu, Disable, 2 Cinetica
 			}
 			Else
 			{
-				Menu, as, Enable, 2 Cinetica
+				Menu, 2:TrialSelectionContextualMenu, Enable, 2 Cinetica
 			}
 
 			ifExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.emg
 			{
-				Menu, as, Enable, 3 EMG
+				Menu, 2:TrialSelectionContextualMenu, Enable, 3 EMG
 			}
 			Else
 			{
-				Menu, as, Disable, 3 EMG
+				Menu, 2:TrialSelectionContextualMenu, Disable, 3 EMG
 			}
-			Menu, as, Show
+
+			ifExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.raw
+			{
+				Menu, 2:TrialSelectionContextualMenu, Enable, 5 Interpolar
+			}
+			Else
+			{
+				Menu, 2:TrialSelectionContextualMenu, Disable, 5 Interpolar
+			}
+
+			Menu, 2:TrialSelectionContextualMenu, Show
 		}
 		else if Cantidad = 2
 		{
@@ -789,7 +862,7 @@ if cont = ThunderRT6ListBox2
 	}
 	Return
 
-	Interpolar:
+	2:Interpolar:
 	Sleep 20
 	FileCopy, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%-%A_Now%.RAW.bkp
 	FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\%nombreArchivo%.RAW
