@@ -51,22 +51,42 @@ return
 return
 
 q::
+CloseModel()
 TogglePlatformOnOff("on")
-TimetoFrame()
+DisplayToFrames()
 OpenModel("Elic2std.XMF","ThunderRT6CommandButton1")
 SendInput !-n!-x
+WinWait,Tracklab ahk_class #32770 ahk_exe tracklab.exe, Autolabeling failed on, 1
+If ErrorLevel = 0 
+{
+	WinActivate
+	Control, Check,,Button1,A
+	MsgBox,51,Error de autolabeling,Error de autolabeling. Probar sin talones?
+	IfMsgBox, Yes
+	{
+		CloseModel()
+		OpenModel("Elic2wlk.XMF","ThunderRT6CommandButton1")
+		SendInput !-n!-x
+	}
+	IfMsgBox, No
+	{
+		SendInput !-n!-x
+	}
+}
 return
 
 e::
+CloseModel()
 TogglePlatformOnOff("on")
-TimetoFrame()
+DisplayToFrames()
 OpenModel("piernader.XMF","ThunderRT6OptionButton1")
 SendInput !-n!-x
 return
 
-r::
++q::
+CloseModel()
 TogglePlatformOnOff("on")
-TimetoFrame()
+DisplayToFrames()
 OpenModel("Elic2wlk.XMF","ThunderRT6CommandButton1")
 SendInput !-n!-x
 return
@@ -171,7 +191,14 @@ TogglePlatform()
 Return
 
 y::
-TimetoFrame()
+If IsDisplayFrames() = True
+{
+	DisplayToSeconds()
+}
+Else
+{
+	DisplayToFrames()
+}
 Return
 
 #IfWinActive, Save reconstructed data as ... ahk_class #32770
@@ -200,16 +227,6 @@ else
 	SendInput {tab}
 }
 Return
-
-;Cambia el display verde de tiempo a cuadros.
-TimetoFrame(){
-	BlockInput, MouseMove
-	MouseGetPos, Xo, Yo	
-	SetMouseDelay, -1
-	MouseClick, , 332, 128, , 0
-	MouseMove, %Xo%, %Yo%, 0
-	BlockInput, MouseMoveOff
-}
 
 ;Muestra o oculta las plataformas de fuerza
 TogglePlatform(){
@@ -244,11 +261,158 @@ TogglePlatformOnOff(onof:="on"){
 ;Abre el modelo "model" y presiona "button" una vez abierto
 OpenModel(model,button){
 	WinActivate, Tracklab ahk_class ThunderRT6MDIForm
-	WinMenuSelectItem, Tracklab, , 6&, 2&
+	WinMenuSelectItem, Tracklab, , Model, Open...
 	WinWaitActive, Open model file. ahk_class #32770
 	ControlSetText, Edit1, C:\Tracklab\%model%, A
 	Control,Check,, Button2, A
 	WinWaitActive, Tracklab ahk_class ThunderRT6MDIForm
 	Control.WaitVisible(%button%)
 	Control, Check, , %button%, A
+}
+
+CloseModel(){
+	WinActivate, Tracklab ahk_class ThunderRT6MDIForm
+	WinMenuSelectItem, Tracklab, , Model, Close
+}
+
+ToggleSegsFrames(opcion){
+
+	If IsDisplayFrames()
+	{
+		MsgBox, Es segundos
+	}
+	Else
+	{
+		MsgBox, No es segundos
+	}
+
+}
+
+DisplayToFrames(){
+	ControlGetPos, X_IM, Y_IM, W_IM, H_IM, ThunderRT6PictureBoxDC8
+	If X_IM != ""
+	{
+		X_IMF:=X_IM + W_IM
+		Y_IMF:=Y_IM + H_IM
+
+		ImageSearch, Ox, Oy, %X_IM%, %Y_IM%, %X_IMF%,%Y_IMF%, segundo.bmp
+		if ErrorLevel = 0
+		{
+			BlockInput, MouseMove
+			MouseGetPos, Xo, Yo
+			SetMouseDelay, -1
+			MouseClick, , %Ox%, %Oy%, , 0
+			MouseMove, %Xo%, %Yo%, 0
+			BlockInput, MouseMoveOff
+			return True
+		}
+		Else
+		{
+			return False
+		}
+	}
+	ControlGetPos, X_IM, Y_IM, W_IM, H_IM, ThunderRT6PictureBoxDC9
+	If X_IM != ""
+	{
+		X_IMF:=X_IM + W_IM
+		Y_IMF:=Y_IM + H_IM
+
+		ImageSearch, Ox, Oy, %X_IM%, %Y_IM%, %X_IMF%,%Y_IMF%, segundo.bmp
+		if ErrorLevel = 0
+		{
+			BlockInput, MouseMove
+			MouseGetPos, Xo, Yo
+			SetMouseDelay, -1
+			MouseClick, , %Ox%, %Oy%, , 0
+			MouseMove, %Xo%, %Yo%, 0
+			BlockInput, MouseMoveOff
+			return True
+		}
+		Else
+		{
+			return False
+		}
+	}
+}
+
+DisplayToSeconds(){
+	ControlGetPos, X_IM, Y_IM, W_IM, H_IM, ThunderRT6PictureBoxDC8
+	If X_IM != ""
+	{
+		X_IMF:=X_IM + W_IM
+		Y_IMF:=Y_IM + H_IM
+
+		ImageSearch, Ox, Oy, %X_IM%, %Y_IM%, %X_IMF%,%Y_IMF%, frames.bmp
+		if ErrorLevel = 0
+		{
+			BlockInput, MouseMove
+			MouseGetPos, Xo, Yo
+			SetMouseDelay, -1
+			MouseClick, , %Ox%, %Oy%, , 0
+			MouseMove, %Xo%, %Yo%, 0
+			BlockInput, MouseMoveOff
+			return True
+		}
+		Else
+		{
+			return False
+		}
+	}
+	ControlGetPos, X_IM, Y_IM, W_IM, H_IM, ThunderRT6PictureBoxDC9
+	If X_IM != ""
+	{
+		X_IMF:=X_IM + W_IM
+		Y_IMF:=Y_IM + H_IM
+
+		ImageSearch, Ox, Oy, %X_IM%, %Y_IM%, %X_IMF%,%Y_IMF%, frames.bmp
+		if ErrorLevel = 0
+		{
+			BlockInput, MouseMove
+			MouseGetPos, Xo, Yo
+			SetMouseDelay, -1
+			MouseClick, , %Ox%, %Oy%, , 0
+			MouseMove, %Xo%, %Yo%, 0
+			BlockInput, MouseMoveOff
+			return True
+		}
+		Else
+		{
+			return False
+		}
+	}
+}
+
+IsDisplayFrames(){
+	ControlGetPos, X_IM, Y_IM, W_IM, H_IM, ThunderRT6PictureBoxDC8
+	If X_IM != ""
+	{
+		X_IMF:=X_IM + W_IM
+		Y_IMF:=Y_IM + H_IM
+
+		ImageSearch, Ox, Oy, %X_IM%, %Y_IM%, %X_IMF%,%Y_IMF%, frames.bmp
+		if ErrorLevel = 0
+		{
+			return True
+		}
+		Else
+		{
+			return False
+		}
+	}
+	ControlGetPos, X_IM, Y_IM, W_IM, H_IM, ThunderRT6PictureBoxDC9
+	If X_IM != ""
+	{
+		X_IMF:=X_IM + W_IM
+		Y_IMF:=Y_IM + H_IM
+
+		ImageSearch, Ox, Oy, %X_IM%, %Y_IM%, %X_IMF%,%Y_IMF%, frames.bmp
+		if ErrorLevel = 0
+		{
+			return True
+		}
+		Else
+		{
+			return False
+		}
+	}
 }
