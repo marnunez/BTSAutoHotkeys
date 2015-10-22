@@ -9,11 +9,15 @@ LB_ERR = -1
 
 ;Detecta si en este momento hay un menu contextual presente
 DetectContextMenu(){
-   GuiThreadInfoSize = 48
-   VarSetCapacity(GuiThreadInfo, 48)
-   NumPut(GuiThreadInfoSize, GuiThreadInfo, 0)
+   ;VarSetCapacity(GuiThreadInfo, 48)
+   ;NumPut(GuiThreadInfoSize, GuiThreadInfo, 0)
 
-   if not DllCall("GetGUIThreadInfo", uint, 0, str, GuiThreadInfo)
+   VarSetCapacity(GuiThreadInfo,48,0)
+   NumPut(48,GuiThreadInfo,0,"Uint")
+   ;ListVars
+   ;Pause
+
+   if not DllCall("GetGUIThreadInfo", "Uint", 0, "Uint", &GuiThreadInfo)
    {
       MsgBox GetGUIThreadInfo() indicated a failure.
       return
@@ -153,3 +157,25 @@ class Control{
    }
 
 }
+
+
+;ControlGet, Textos, List, , ThunderRT6ListBox1, A
+
+;Cantidad_de_trials := 0
+;Cantidad_de_elaborados := 0
+;Cantidad_de_trakeados := 0
+
+;Loop,Parse,Textos, `n
+;{
+;  fastw := InStr(A_LoopField, Acquired, true)
+;  MsgBox, %A_LoopField% %fastw%
+;}
+;MsgBox, %Textos%
+
+;ControlGetText, orig, ThunderRT6CheckBox1
+;orig = %orig% `nProbando
+;MsgBox, %orig%
+;ControlGetPos, , , Width2, Height2, ThunderRT6CheckBox1
+;Height2 += 30
+;ControlMove, ThunderRT6CheckBox1, , , %Width2%, %Height2%
+;ControlSetText, ThunderRT6CheckBox1, %orig%

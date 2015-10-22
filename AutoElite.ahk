@@ -15,7 +15,8 @@ IfWinNotExist, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 	Run, "C:\Archivos de programa\BTS Bioengineering\Gaitel30\GaitEl30.exe", "C:\Archivos de programa\BTS Bioengineering\Gaitel30\"	
 }
 Else
-WinActivate, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
-
-#Include, BTS.ahk
-#Include, Tracklab.ahk
+{
+	WinActivate, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
+}
+Run, BTS.ahk
+Run, Tracklab.ahk

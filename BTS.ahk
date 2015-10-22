@@ -26,10 +26,6 @@ SetTimer, AlertaOrtesis, 420000
 
 ProgramFilesWin := GetProgramFiles()
 
-VarSetCapacity(ante,512)
-VarSetCapacity(next,512)
-VarSetCapacity(last,512)
-	
 #s::Suspend ;Inicio + S --> Deshabilita/Habilita todos los atajos (menos a sí mismo)
 
 #IfWinActive, Nueva  Sesión ahk_class ThunderRT6FormDC ahk_exe GaitEl30.exe
@@ -64,6 +60,7 @@ if ExisteTrialProcessing()
 {
 	Control,Check,, Button16, A
 }
+OpenTrialProcessing()
 return
 
 #IfWinActive, Preview ahk_class ThunderRT6FormDC
@@ -79,7 +76,7 @@ Control,Check,, Button7, A
 if A_OSVersion = WIN_7
 {
 	WinWaitActive, PDFCreator 0.9.6 ahk_class ThunderRT6FormDC ahk_exe PDFCreator.exe
-	ControlSetText, ThunderRT6TextBox6, %nombreArchivo%
+	ControlSetText, ThunderRT6TextBox6, % TrialActual.nombreArchivo
 }
 Return
 
@@ -93,7 +90,7 @@ space::
 Enter::
 Control,Check,, ThunderRT6CommandButton7, A
 WinWaitActive, Guardar como ahk_class #32770 ahk_exe PDFCreator.exe
-ControlSetText, Edit1, C:\Users\marcha\Documents\pdf\%nombreArchivo%.pdf, A
+ControlSetText, Edit1, % "C:\Users\marcha\Documents\pdf\" . TrialActual.nombreArchivo . ".pdf", A
 
 ;**************************************************************
 ; Atajos de la ventana de trackeo ("Select trials to process")
@@ -109,11 +106,8 @@ else
 {
 	Control.Focus("ThunderRT6ListBox1")
 	SendInput {Up}
-	/*
-	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
-	SendMessage, LB_GETTEXT, %ErrorLevel%, &last, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
-	last := SubStr(last, 1,30)
-	*/
+	t := GetCurrentTrial("ThunderRT6ListBox3","ThunderRT6ListBox2","ThunderRT6ListBox1")
+	SetLastTrialAccesed(t)
 }
 return
 
@@ -136,11 +130,8 @@ else
 {
 	Control.Focus("ThunderRT6ListBox1")
 	SendInput {Down}
-	/*
-	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
-	SendMessage, LB_GETTEXT, %ErrorLevel%, &last, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
-	last := SubStr(last, 1,30)
-	*/
+	t := GetCurrentTrial("ThunderRT6ListBox3","ThunderRT6ListBox2","ThunderRT6ListBox1")
+	SetLastTrialAccesed(t)
 }
 return
 
@@ -163,12 +154,14 @@ else
 {
 	Control.Focus("ThunderRT6ListBox2")
 	SendInput {Left}
+	GenerarInfoSesion()
 }
 return
 
 Left::
 Control.Focus("ThunderRT6ListBox2")
 SendInput {Up}
+GenerarInfoSesion()
 return
 
 d::
@@ -180,12 +173,14 @@ else
 {
 	Control.Focus("ThunderRT6ListBox2")
 	SendInput {Down}
+	GenerarInfoSesion()
 }
 return
 
 Right::
 Control.Focus("ThunderRT6ListBox2")
 SendInput {Down}
+GenerarInfoSesion()
 return
 
 q::
@@ -204,10 +199,6 @@ Control,Check,, Button5, A
 Return
 
 Enter::
-SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
-SendMessage, LB_GETTEXT, %ErrorLevel%, &next, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
-next := SubStr(next, 1,30)
-
 Control,Check,, Button6, A
 WinWaitActive, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
 Loop
@@ -227,10 +218,6 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
-	SendMessage, LB_GETTEXT, %ErrorLevel%, &next, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
-	next := SubStr(next, 1,30)
-	
 	Control,Check,, Button6, A
 	Loop
 	{
@@ -251,17 +238,6 @@ if Control.GetFocus() = "ThunderRT6TextBox1"
 }
 else
 {
-	if next
-	{
-		ante := next
-		next =
-		goto va
-	}
-
-	SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
-	SendMessage, LB_GETTEXT, %ErrorLevel%, &ante, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
-	ante := SubStr(ante, 1,30)
-	
 	va:
 	ControlGet, es, Checked, , ThunderRT6CheckBox1, A
 	if es
@@ -272,18 +248,6 @@ else
 	{
 		Control, Check, , ThunderRT6CheckBox1, A
 	}
-
-	Sleep 1
-
-	SendMessage, LB_FINDSTRING, -1, &ante, ThunderRT6ListBox1, A ;Busco el texto
-	;MsgBox, %ErrorLevel%
-	if ErrorLevel = 4294967295
-	{
-		next := ante
-		;MsgBox, %ante%`n%next%
-		return
-	}
-	SendMessage, LB_SETCURSEL, %ErrorLevel%, 0, ThunderRT6ListBox1, A ;Me muevo al encontrado
 }
 Return
 
@@ -317,7 +281,6 @@ else if sel != ""
 {
 	if Control.IsEnabled("Button3")
 	{
-		
 		Control,Check,, Button3, A
 		WinWaitActive, Notas... ahk_class ThunderRT6FormDC
 		Control.Focus("Button2")
@@ -331,38 +294,16 @@ Return
 Control.Focus("ThunderRT6TextBox1")
 Return
 
+;^r::
+;Control.Focus("ThunderRT6ListBox1")
+;ControlGet
+
 RButton::
 AppsKey::
 MouseGetPos, , , , cont
 if cont = ThunderRT6ListBox1
 {
-	ControlGet, tas, Choice, , ThunderRT6ListBox1, A
-	ControlGet, tas2, Choice, , ThunderRT6ListBox3, A
-	ControlGet, tas3, Choice, , ThunderRT6ListBox2, A
-	Loop, Parse, tas2, %A_Space%
-	{
-		idpaciente = %A_LoopField%
-		Break
-	}
-	Loop, Parse, tas3, %A_Space%
-	{
-		idSesionNum = %A_LoopField%
-		Break
-	}
-	startId := RegExMatch(tas, "\d\w|__")
-	idTrial := SubStr(tas, startId,2)
-	startId := RegExMatch(tas, "\w\s\w\s\w\s\w")
-	P1 := SubStr(tas, startId,1)
-	P2 := SubStr(tas, startId+2,1)
-	idSesionNum := Chr(idSesionNum + 96)
-	largo := StrLen(idpaciente)
-	largo2 := 5 - largo
-	equis = 
-	Loop, %largo2%
-	{
-		equis := equis . "x"
-	}
-	nombreArchivo = %idpaciente%%equis%%idSesionNum%%idTrial%
+	TrialActual := GetCurrentTrial("ThunderRT6ListBox3","ThunderRT6ListBox2","ThunderRT6ListBox1")
 
 	1:GuiContextMenu:
 	ControlGet, texto, Choice, , ThunderRT6ListBox2, A
@@ -370,13 +311,13 @@ if cont = ThunderRT6ListBox1
 	Cantidad = %ErrorLevel%
 	if %texto%
 	{
-		ifExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.raw
+		if (FileExist(ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".raw"))
 		{
-			Menu, 1:TrialProcessingContextualMenu, Enable, 1 Interpolar
+			Menu, 2:TrialSelectionContextualMenu, Enable, 5 Interpolar
 		}
 		Else
 		{
-			Menu, 1:TrialProcessingContextualMenu, Disable, 1 Interpolar
+			Menu, 2:TrialSelectionContextualMenu, Disable, 5 Interpolar
 		}
 		
 		Menu, 1:TrialProcessingContextualMenu, Show
@@ -385,11 +326,11 @@ if cont = ThunderRT6ListBox1
 
 	1:Interpolar:
 	Sleep 20
-	FileCopy, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%-%A_Now%.RAW.bkp
-	FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\%nombreArchivo%.RAW
-	RunWait INTERP2.EXE %nombreArchivo%.RAW INTER.RAW 100, C:\Archivos de programa\BTS Bioengineering\Gaitel30\Exe\
-	FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\INTER.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW,1
-	FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\%nombreArchivo%.RAW
+	FileCopy % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".RAW", % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . "-" . A_Now . ".RAW.bkp"
+	FileMove % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".RAW", % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Exe\" . TrialActual.nombreArchivo . ".RAW"
+	RunWait % "INTERP2.EXE " . TrialActual.nombreArchivo . ".RAW INTER.RAW 100", C:\Archivos de programa\BTS Bioengineering\Gaitel30\Exe\
+	FileMove % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Exe\INTER.RAW", % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".RAW",1
+	FileDelete % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Exe\" . TrialActual.nombreArchivo . ".RAW"
 	Return
 }
 
@@ -570,33 +511,7 @@ AppsKey::
 MouseGetPos, , , , cont
 if cont = ThunderRT6ListBox2
 {
-	ControlGet, tas, Choice, , ThunderRT6ListBox2, A
-	ControlGet, tas2, Choice, , ThunderRT6ListBox3, A
-	ControlGet, tas3, Choice, , ThunderRT6ListBox1, A
-	Loop, Parse, tas2, %A_Space%
-	{
-		idpaciente = %A_LoopField%
-		Break
-	}
-	Loop, Parse, tas3, %A_Space%
-	{
-		idSesionNum = %A_LoopField%
-		Break
-	}
-	startId := RegExMatch(tas, "\d\w|__")
-	idTrial := SubStr(tas, startId,2)
-	startId := RegExMatch(tas, "\w\s\w\s\w\s\w")
-	P1 := SubStr(tas, startId,1)
-	P2 := SubStr(tas, startId+2,1)
-	idSesionNum := Chr(idSesionNum + 96)
-	largo := StrLen(idpaciente)
-	largo2 := 5 - largo
-	equis = 
-	Loop, %largo2%
-	{
-		equis := equis . "x"
-	}
-	nombreArchivo = %idpaciente%%equis%%idSesionNum%%idTrial%
+	TrialActual := GetCurrentTrial("ThunderRT6ListBox3","ThunderRT6ListBox1","ThunderRT6ListBox2")
 
 	2:GuiContextMenu:
 	ControlGet, texto, Choice, , ThunderRT6ListBox2, A
@@ -607,7 +522,7 @@ if cont = ThunderRT6ListBox2
 		if Cantidad = 1
 		{
 
-			if (P1 = "N" && P2 = "N")
+			if (TrialActual.Plat1 = "N" && TrialActual.Plat2 = "N")
 			{
 				Menu, 2:TrialSelectionContextualMenu, Disable, 2 Cinetica
 			}
@@ -616,7 +531,7 @@ if cont = ThunderRT6ListBox2
 				Menu, 2:TrialSelectionContextualMenu, Enable, 2 Cinetica
 			}
 
-			ifExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.emg
+			if (FileExist(ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".emg"))
 			{
 				Menu, 2:TrialSelectionContextualMenu, Enable, 3 EMG
 			}
@@ -625,7 +540,7 @@ if cont = ThunderRT6ListBox2
 				Menu, 2:TrialSelectionContextualMenu, Disable, 3 EMG
 			}
 
-			ifExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.raw
+			if (FileExist(ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".raw"))
 			{
 				Menu, 2:TrialSelectionContextualMenu, Enable, 5 Interpolar
 			}
@@ -649,13 +564,18 @@ if cont = ThunderRT6ListBox2
 			selPos := GetInteger(SelectList, 2)
 			SendMessage, LB_GETTEXT, %selPos%, &trial2_texto, ThunderRT6ListBox2, A
 			
+			SelectList := 0
+			
 			startId := RegExMatch(trial1_texto, "\d\w|__")
 			idTrial1 := SubStr(trial1_texto, startId,2)
-			estudio1 = %idPaciente%%equis%%idSesionNum%%idTrial1%
+			estudio1 := TrialActual.idPaciente . TrialActual.CantidadDeEquis . TrialActual.idSesionChar . idTrial1
+			trial1_texto := 0
 
 			startId := RegExMatch(trial2_texto, "\d\w|__")
 			idTrial2 := SubStr(trial2_texto, startId,2)
-			estudio2 = %idPaciente%%equis%%idSesionNum%%idTrial2%
+			estudio2 := TrialActual.idPaciente . TrialActual.CantidadDeEquis . TrialActual.idSesionChar . idTrial2
+			trial2_texto := 0
+			
 			Menu, merge, Add, Intercambiar %estudio1% por %estudio2%, Intercambiar
 			Menu, merge, Show
 			Menu, merge, DeleteAll
@@ -707,13 +627,13 @@ if cont = ThunderRT6ListBox2
 
 	Cinetica:
 	Sleep 20
-	if (P1 = "L" || P2 = "L")
+	if (TrialActual.Plat1 = "L" || TrialActual.Plat2 = "L")
 	{
-		nombreArchivo := nombreArchivo . "_izq"
+		TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_izq"
 	}
-	if (P1 = "R" || P2 = "R")
+	if (TrialActual.Plat1 = "R" || TrialActual.Plat2 = "R")
 	{
-		nombreArchivo := nombreArchivo . "_der"
+		TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_der"
 	}
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
@@ -728,7 +648,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG8:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_EMG8"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_EMG8"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -740,7 +660,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG4:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_EMG4"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_EMG4"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -752,7 +672,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG5:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_EMG5"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_EMG5"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -764,7 +684,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG2L:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_EMG2L"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_EMG2L"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -776,7 +696,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG2R:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_EMG2R"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_EMG2R"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -788,7 +708,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG4L:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_EMG4L"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_EMG4L"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -800,7 +720,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG4R:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_EMG4R"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_EMG4R"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -812,7 +732,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG5L:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_EMG5L"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_EMG5L"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -824,7 +744,7 @@ if cont = ThunderRT6ListBox2
 
 	EMG5R:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_EMG5R"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_EMG5R"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -836,7 +756,7 @@ if cont = ThunderRT6ListBox2
 
 	Vastos:
 	Sleep 20
-	nombreArchivo := nombreArchivo . "_Vastos"
+	TrialActual.nombreArchivo := TrialActual.nombreArchivo . "_Vastos"
 	Control,Check,, Button6, A
 	WinWaitActive, Select Visualization ahk_class ThunderRT6FormDC
 	Control,Check,, Button1, A
@@ -848,27 +768,27 @@ if cont = ThunderRT6ListBox2
 
 	AbrirArchivo:
 	Sleep 20
-	IfExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RIC
+	if (FileExist(ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".ric"))
 	{
-		Run, explorer.exe /select`, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RIC
+		Run % "explorer.exe /select," . """" . ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".ric"""
 	}
-	else IfExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW
+	else if (FileExist(ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".RAW"))
 	{
-		Run, explorer.exe /select`, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW
+		Run % "explorer.exe /select," . """" . ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".RAW"""
 	}
-	else IfExist, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.dbt
+	else if (FileExist(ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".dbt"))
 	{
-		Run, explorer.exe /select`, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.dbt
+		Run % "explorer.exe /select," . """" . ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".dbt"""
 	}
 	Return
 
 	2:Interpolar:
 	Sleep 20
-	FileCopy, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%-%A_Now%.RAW.bkp
-	FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\%nombreArchivo%.RAW
-	RunWait INTERP2.EXE %nombreArchivo%.RAW INTER.RAW 100, C:\Archivos de programa\BTS Bioengineering\Gaitel30\Exe\
-	FileMove, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\INTER.RAW, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Data\%nombreArchivo%.RAW,1
-	FileDelete, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Exe\%nombreArchivo%.RAW
+	FileCopy % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".RAW", % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . "-" . A_Now . ".RAW.bkp"
+	FileMove % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".RAW", % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Exe\" . TrialActual.nombreArchivo . ".RAW"
+	RunWait % "INTERP2.EXE " . TrialActual.nombreArchivo . ".RAW INTER.RAW 100", C:\Archivos de programa\BTS Bioengineering\Gaitel30\Exe\
+	FileMove % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Exe\INTER.RAW", % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Data\" . TrialActual.nombreArchivo . ".RAW",1
+	FileDelete % ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Exe\" . TrialActual.nombreArchivo . ".RAW"
 	Return
 
 }
@@ -1072,21 +992,11 @@ tab::
 Return
 
 r::
+t := GetLastTrialAccesed()
+;MsgBox, % """" . t.idSesionNum . """"
 WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 1& , 5&
 WinWaitActive, Select trials to process ahk_class ThunderRT6FormDC
-
-if next
-{
-	ante := next
-	next =
-	goto va2
-}
-
-SendMessage, LB_GETCURSEL, 0, 0, ThunderRT6ListBox1, A ;Posicion de la fila seleccionada
-SendMessage, LB_GETTEXT, %ErrorLevel%, &ante, ThunderRT6ListBox1, A ;Texto de la fila seleccionada
-ante := SubStr(ante, 1,30)
-
-va2:
+Sleep 100
 ControlGet, es, Checked, , ThunderRT6CheckBox1, A
 if es
 {
@@ -1098,19 +1008,12 @@ Else
 }
 Sleep 1
 
-SendMessage, LB_FINDSTRING, -1, &ante, ThunderRT6ListBox1, A ;Busco el texto
-if ErrorLevel = 4294967295
-{
-	next := ante
-	return
-}
-SendMessage, LB_SETCURSEL, %ErrorLevel%, 0, ThunderRT6ListBox1, A ;Me muevo al encontrado
+GoToTrial("ThunderRT6ListBox3","ThunderRT6ListBox2","ThunderRT6ListBox1",t)
+GenerarInfoSesion()
 Return
 
 t::
-WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 2& , 1&
-WinWaitActive, Select Trials ahk_class ThunderRT6FormDC
-Control.Focus("ThunderRT6ListBox2")
+OpenTrialProcessing()
 Return
 
 #n::
@@ -1163,7 +1066,6 @@ if ExisteBarra()
 	MouseGetPos, Xo, Yo
 	SetMouseDelay, -1
 	SendInput, {Click Right down %X%, %Y%}{Click Right up %X%, %Yf%}
-	;MouseClickDrag, Right, %X%, %Y%, %X%, %Yf%, 0
 	MouseMove, %Xo%, %Yo%, 0
 	SetTitleMatchMode, %OldMatchMode%
 }
@@ -1173,7 +1075,7 @@ v::
 if ExisteBarra()
 {
 	WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 6& , 2&
-
+	BlockInput On
 	OldMatchMode := A_TitleMatchMode
 	SetTitleMatchMode, RegEx
 	ControlGet, Handle2D, Hwnd, , \s3D$
@@ -1211,9 +1113,10 @@ if ExisteBarra()
 	{
 		MouseClickDrag, Right, %X%, %Y%, %X%, %Yf%, 0
 	}
-		MouseMove, %Xo%, %Yo%, 0
-		SetTitleMatchMode, %OldMatchMode%
-
+	MouseMove, %Xo%, %Yo%, 0
+	SetTitleMatchMode, %OldMatchMode%
+	
+	BlockInput Off
 }
 Return
 
@@ -1743,6 +1646,280 @@ AdquireStanding(){
 		Control,Check,, TBitBtn6, A
 	}
 }
+
+GetLastTrialAccesed(){
+	ProgramFilesWin := GetProgramFiles()
+	FileReadLine, idPatient, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\LASTPATI.ENT, 1
+	FileReadLine, idSesion, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\LASTPATI.ENT, 2
+	FileReadLine, idTrial, %ProgramFilesWin%\BTS Bioengineering\Gaitel30\Protocol\Setup\LASTPATI.ENT, 3
+
+	StringReplace , idPatient, idPatient, %A_Space%,,All
+	StringReplace , idSesion, idSesion, %A_Space%,,All
+
+	Trial := {idPaciente: idPatient, idSesionNum: idSesion, idTrial: idTrial}
+	return Trial
+}
+
+GoToTrial(PatientListBox,SessionListBox,TrialListBox,Trial){
+	;Control, ChooseString, % Trial.idPaciente . "  ", %PatientListBox%, A
+	VarSetCapacity(resul,512)
+	resul := Trial.idPaciente . A_Space
+	SendMessage, 0x018F, -1, &resul, %PatientListBox%, A
+	if ErrorLevel = 4294967295
+	{
+		MsgBox % "No se ha encontrado el idPaciente " . """" . resul . """"
+		return
+	}
+	Else
+	{
+		SendMessage, 0x0186, %ErrorLevel%, 0, %PatientListBox%, A
+		Sleep 10
+	}
+	
+	resul := Trial.idSesionNum . A_Space . A_Space
+
+	SendMessage, 0x018F, -1, &resul, %SessionListBox%, A
+	if ErrorLevel = 4294967295
+	{
+		MsgBox % "No se ha encontrado el idSesion " . """" . resul . """"
+		return
+	}
+	Else
+	{
+		afa = %ErrorLevel%
+		SendMessage, 0x0186, %afa%, 0, %SessionListBox%, A
+		SendMessage, 0x019E, %afa%, 0, %SessionListBox%, A
+	
+		ControlGet, es, Checked, , ThunderRT6CheckBox1, A
+		if es
+		{
+			Control, UnCheck, , ThunderRT6CheckBox1, A
+			Control, Check, , ThunderRT6CheckBox1, A
+		}
+		Else
+		{
+			Control, Check, , ThunderRT6CheckBox1, A
+			Control, UnCheck, , ThunderRT6CheckBox1, A
+		}
+			Sleep 10
+		}
+
+	if (Trial.idTrial <> "___")
+	{
+		resul := "Normal walking      " . SubStr(Trial.idTrial,2)
+	}
+	else
+	{
+		resul := "Standing "
+	}
+	
+	SendMessage, 0x018F, -1, &resul, %TrialListBox%, A
+	if ErrorLevel = 4294967295
+	{
+		MsgBox % "No se ha encontrado el trial " . """" . resul . """"
+		return
+	}
+	Else
+	{
+		SendMessage, 0x0186, %ErrorLevel%, 0, %TrialListBox%, A
+		Sleep 10
+	}
+	resul := 0
+	return
+}
+
+SetLastTrialAccesed(t){
+	if ((t.idTrial = "") or (t.idSesionNum = "") or (t.idPaciente = ""))
+	{
+		return
+	}
+	
+	ProgramFilesWin := GetProgramFiles()
+	filename := ProgramFilesWin . "\BTS Bioengineering\Gaitel30\Protocol\Setup\LASTPATI.ENT"
+	file := FileOpen(filename, "w")
+	if !IsObject(file)
+	{
+		MsgBox Can't open "%filename%" for writing.
+		return
+	}
+	if t.idTrial == "__"
+	{
+		trial := A_Space . t.idPaciente . A_Space . "`n" . A_Space . t.idSesionNum . A_Space . "`n" . "_" . t.idTrial . "`n"
+	}
+	else
+	{
+		trial := A_Space . t.idPaciente . A_Space . "`n" . A_Space . t.idSesionNum . A_Space . "`n" . "N" . t.idTrial . "`n"
+	}
+		
+	;MsgBox, %trial%
+	file.Write(trial)
+	file.Close()
+}
+
+GetCurrentTrial(PatientListBox,SessionListBox,TrialListBox){
+	ControlGet, tas, Choice, , %TrialListBox%, A
+	ControlGet, tas2, Choice, , %PatientListBox%, A
+	ControlGet, tas3, Choice, , %SessionListBox%, A
+	Loop, Parse, tas2, %A_Space%
+	{
+		idpaciente = %A_LoopField%
+		Break
+	}
+	Loop, Parse, tas3, %A_Space%
+	{
+		idSesionNum = %A_LoopField%
+		Break
+	}
+	startId := RegExMatch(tas, "\d\w|__")
+	idTrial := SubStr(tas, startId,2)
+	startId := RegExMatch(tas, "\w\s\w\s\w\s\w")
+	P1 := SubStr(tas, startId,1)
+	P2 := SubStr(tas, startId+2,1)
+	idSesionChar := Chr(idSesionNum + 96)
+	equis := CantidadDeEquis(idpaciente)
+	nombreArchivo = %idpaciente%%equis%%idSesionChar%%idTrial%
+	ret := {idPaciente: idpaciente, idSesionChar: idSesionChar, idSesionNum: idSesionNum, idTrial: idTrial, nombreArchivo: nombreArchivo, Plat1: P1, Plat2: P2, CantidadDeEquis: equis}
+	;MsgBox, %nombreArchivo%
+	Return ret
+}
+
+CantidadDeEquis(idPaciente){
+	largo := StrLen(idpaciente)
+	largo2 := 5 - largo
+	equis = 
+	Loop, %largo2%
+	{
+		equis := equis . "x"
+	}
+	return equis
+}
+
+GenerarInfoSesion(){
+	ControlGet, Lista, List, , ThunderRT6ListBox1, A
+	
+	adquiridos := 0 , trackeados := 0 , elaborados := 0 , procesados := 0 , standing := "NO"
+	izquierdas_adquiridas := 0 , izquierdas_trackeadas := 0 , izquierdas_elaboradas := 0 , izquierdas_procesadas := 0
+	derechas_adquiridas := 0 , derechas_trackeadas := 0 , derechas_elaboradas := 0 , derechas_procesadas := 0
+	
+	Loop, Parse, Lista, `n
+	{
+		if InStr(A_LoopField, "Standing")
+		{
+			if InStr(A_LoopField, "Elaborated")
+			{
+				standing := "OK"
+			}
+		}
+		else
+		{
+			if InStr(A_LoopField,"Acquired")
+			{
+				adquiridos += 1
+				if EsIzquierda(A_LoopField) 
+				{
+					izquierdas_adquiridas += 1
+				}
+				if EsDerecha(A_LoopField) 
+				{
+					derechas_adquiridas += 1
+				}
+			}
+			else if  InStr(A_LoopField,"Tracked")
+			{
+				trackeados += 1
+				if EsIzquierda(A_LoopField)
+				{
+					izquierdas_trackeadas += 1
+				}
+				if EsDerecha(A_LoopField) 
+				{
+					derechas_trackeadas += 1
+				}
+			}
+			else if  InStr(A_LoopField,"Elaborated")
+			{
+				elaborados += 1
+				if EsIzquierda(A_LoopField)
+				{
+					izquierdas_elaboradas += 1
+				}
+				if EsDerecha(A_LoopField)
+				{
+					derechas_elaboradas += 1
+				}
+			}
+			else if  InStr(A_LoopField,"Gait")
+			{
+				procesados += 1
+				if EsIzquierda(A_LoopField)
+				{
+					izquierdas_procesadas += 1
+				}
+
+				if EsDerecha(A_LoopField) 
+				{
+					derechas_procesadas += 1
+				}
+			}
+		}
+	}
+	ControlMove ThunderRT6CheckBox1, , , 360,34 , A
+
+	str .= "Adquiridos: " . adquiridos
+	str .= "       Trackeados: " . trackeados
+	str .= "      Elaborados: " . elaborados
+	str .= "      Procesados: " . procesados
+	str .= "`n"
+	str .= "Standing: " . standing
+	str .= "      Izquierdas: " . (izquierdas_procesadas + izquierdas_trackeadas + izquierdas_elaboradas + izquierdas_adquiridas)
+	str .= " (" . izquierdas_procesadas
+	str .= " | " . izquierdas_elaboradas
+	str .= " | " . izquierdas_trackeadas
+	str .= " | " . izquierdas_adquiridas . ")"
+	str .= "      Derechas: " . (derechas_procesadas + derechas_trackeadas + derechas_elaboradas + derechas_adquiridas)
+	str .= " (" . derechas_procesadas
+	str .= " | " . derechas_elaboradas
+	str .= " | " . derechas_trackeadas
+	str .= " | " . derechas_adquiridas . ")"
+
+
+	ControlSetText  ThunderRT6CheckBox1, %str%   , A
+	ControlFocus ThunderRT6ListBox1, A
+}
+
+EsIzquierda(fila){
+	if InStr(fila, " L ", True)
+	{
+		return True
+	}
+	else return False
+}
+
+EsDerecha(fila){
+	if InStr(fila, " R ", True)
+	{
+		return True
+	}
+	else return False		
+}
+
+;GetNextLeft(control){
+;	ControlGet, Lista, List, , %control%, A
+;	Loop, Parse, Lista, `n
+;	{
+;		if EsIzquierda()
+;	}
+;}
+
+OpenTrialProcessing(){
+	IfWinActive, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm
+	{
+		WinMenuSelectItem, BTS Bioengineering - EliteClinic ahk_class ThunderRT6MDIForm, , 2& , 1&
+	}
+	WinWaitActive, Select Trials ahk_class ThunderRT6FormDC
+	Control.Focus("ThunderRT6ListBox2")
+}
+
 
 AlertaOrtesis:
 cadena := ReturnFirstLineClipbrd()

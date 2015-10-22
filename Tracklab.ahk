@@ -73,6 +73,7 @@ If ErrorLevel = 0
 		SendInput !-n!-x
 	}
 }
+FocusDataComputing := true
 return
 
 e::
@@ -81,6 +82,7 @@ TogglePlatformOnOff("on")
 DisplayToFrames()
 OpenModel("piernader.XMF","ThunderRT6OptionButton1")
 SendInput !-n!-x
+FocusDataComputing := false
 return
 
 +q::
@@ -89,6 +91,7 @@ TogglePlatformOnOff("on")
 DisplayToFrames()
 OpenModel("Elic2wlk.XMF","ThunderRT6CommandButton1")
 SendInput !-n!-x
+FocusDataComputing := true
 return
 
 g::
@@ -105,7 +108,15 @@ Loop 400
 		Break
 	}
 }
-Control.Focus("Button17")
+
+if (FocusDataComputing)
+{
+	Control.Focus("Button17")
+}
+Else
+{
+	Control,Check,, Button16, A
+}
 Return
 
 ~LButton::
